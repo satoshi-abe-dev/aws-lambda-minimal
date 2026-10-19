@@ -78,7 +78,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 | AWS Builder ID | ID は Identifier（識別子）の略。新しい登録方式で AWS にログインするための個人のアカウント。登録時に作られる |
 | リージョン | AWS のデータセンターがある地域。新しい登録方式では、プロジェクトのリージョンが連絡先の国によって自動で決まる（米国東部（オハイオ）`us-east-2`、欧州（ストックホルム）`eu-north-1`、アジアパシフィック（シドニー）`ap-southeast-2` のどれか）。この手順書では例として `ap-southeast-2` を使う |
 | IAM（Identity and Access Management） | AWS の利用者と権限を管理するサービス。「誰が」「何をしてよいか」を決める。このサンプルでは、Lambda が動くための権限（IAM ロール）を SAM が自動で作る |
-| Lambda | 関数（プログラム）を置いておくと、呼ばれたときだけ実行するサービス。サーバーの管理が要らない。実行した回数と時間に応じて課金される |
+| Lambda | 関数（プログラム）を置いておくと、呼ばれたときだけ実行するサービス。サーバーの管理が要らない（意味は [how-it-works.md](how-it-works.md) の 1 章にある）。実行した回数と時間に応じて課金される |
 | API Gateway（正式な名前は Amazon API Gateway） | AWS のサービスには「Amazon」か「AWS」で始まる正式な名前があり、普段は頭を省いて呼ぶ（AWS Lambda、AWS CloudFormation、Amazon CloudWatch など）。API Gateway も同じで、AWS のサービスの 1 つ。API は Application Programming Interface の略で、プログラムどうしがやり取りするための窓口。HTTP は Hypertext Transfer Protocol の略で、Web でデータをやり取りするときの決まり。インターネットからの HTTP リクエストを受け付けて、Lambda などに渡すサービス。このサンプルでは「HTTP API」という種類を使う |
 | CloudWatch Logs | プログラムのログ（`print` の出力やエラー）を保存するサービス |
 | S3（正式な名前は Amazon S3。Simple Storage Service の略） | ファイルを保存するサービス。ファイルを入れる入れ物を「バケット（bucket）」と呼ぶ。このサンプルでは、`sam deploy` がコードの zip とテンプレートを置く場所として使う。「3」はバージョンや番号ではなく、**S**imple **S**torage **S**ervice の S が 3 つ並ぶことを表す（S1、S2 というサービスはない）。仮想サーバーの EC2（**E**lastic **C**ompute **C**loud、C が 2 つ）も同じ付け方 |
