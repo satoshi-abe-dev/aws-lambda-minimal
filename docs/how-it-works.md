@@ -14,7 +14,7 @@
 
 ### 「サーバーの管理が要らない」の意味
 
-プログラムを動かすには、それを実行するコンピュータ（サーバー）が要る。Lambda では、サーバーの用意と世話を AWS が受け持つ。利用者が用意するのは、コード（`src/app.py`）と設定（`template.yaml`）だけだ。
+プログラムを動かすには、それを実行するコンピュータ（サーバー）が要る。Lambda では、サーバーの用意と世話を AWS が受け持つ。利用者が用意するのは、コード（`src/app.py`）と設定（`template.yaml`）だけ。
 
 比べる相手として、AWS の EC2（Elastic Compute Cloud、仮想サーバーを借りるサービス）で同じことをする場合を並べる。
 
@@ -28,9 +28,9 @@
 | 故障 | 壊れたサーバーから別のサーバーに移す | AWS が対応する |
 | 料金 | 起動している間はずっとかかる（アクセスがなくてもかかる） | 実行した回数と時間の分だけかかる |
 
-お店でいうと、EC2 は店舗を借りて料理人を常駐させる形だ。客が来なくても家賃と人件費がかかり、店舗の修繕や、混んだときの人手集めも自分で行う。Lambda は、注文が入ったときだけ AWS が厨房と料理人を用意し、レシピどおりに作る形で、作った回数と時間の分だけ払う。
+お店でいうと、EC2 は店舗を借りて料理人を常駐させる形。客が来なくても家賃と人件費がかかり、店舗の修繕や、混んだときの人手集めも自分で行う。Lambda は、注文が入ったときだけ AWS が厨房と料理人を用意し、レシピどおりに作る形で、作った回数と時間の分だけ払う。
 
-このような仕組みを「サーバーレス（serverless）」と呼ぶ。サーバーがなくなるわけではなく、AWS の側で動いている。利用者がサーバーを扱わない、という意味の呼び名だ。
+このような仕組みを「サーバーレス（serverless）」と呼ぶ。サーバーがなくなるわけではなく、AWS の側で動いている。利用者がサーバーを扱わない、という意味の呼び名。
 
 サーバーを扱わない代わりに、次の制約がある。
 
@@ -61,7 +61,7 @@ Mac に {"message": "Hello, test!"} が返る
 
 ## 3. ハンドラ：料理人が注文ごとに開くレシピのページ
 
-`src/app.py` の `lambda_handler` は「ハンドラ」と呼ばれる関数だ。Lambda が呼び出す入口の関数で、注文（リクエスト）が来るたびに 1 回呼ばれる。Lambda が起動したときに 1 回だけ呼ばれるものではない。英語の handle は「処理する、さばく」という意味だ。
+`src/app.py` の `lambda_handler` は「ハンドラ」と呼ばれる関数。Lambda が呼び出す入口の関数で、注文（リクエスト）が来るたびに 1 回呼ばれる。Lambda が起動したときに 1 回だけ呼ばれるものではない。英語の handle は「処理する、さばく」という意味。
 
 ### Lambda がハンドラを見つける仕組み
 
@@ -114,7 +114,7 @@ Lambda は一度起動すると、しばらく待機する。待機中に次の�
 | `headers` | 辞書 | HTTP のヘッダー |
 | `body` | 文字列 | HTTP の本文。`json.dumps` で辞書を JSON の文字列に変えたもの（辞書のままではない） |
 
-キーの名前は、Python や Lambda が決めたものではなく、API Gateway が Lambda の戻り値を読むときの決まりだ（HTTP API の「ペイロード形式バージョン 2.0」）。
+キーの名前は、Python や Lambda が決めたものではなく、API Gateway が Lambda の戻り値を読むときの決まり（HTTP API の「ペイロード形式バージョン 2.0」）。
 
 | 決めているもの | 決めている内容 |
 |---|---|
@@ -122,7 +122,7 @@ Lambda は一度起動すると、しばらく待機する。待機中に次の�
 | Lambda | `lambda_handler` の戻り値を、呼び出し元にそのまま渡すこと |
 | API Gateway | 渡された辞書の `statusCode`、`headers`、`body` を読んで、HTTP の返事を作ること |
 
-curl に表示されるのは、`body` の文字列だけだ。`tests/test_app.py` のように API Gateway を通さずに呼ぶ場合、戻り値はただの辞書だ。
+curl に表示されるのは、`body` の文字列だけ。`tests/test_app.py` のように API Gateway を通さずに呼ぶ場合、戻り値はただの辞書。
 
 ### 返事の文字列ができるまで（`?name=test` → `Hello, test!`）
 
@@ -148,7 +148,7 @@ curl に表示されるのは、`body` の文字列だけだ。`tests/test_app.p
 
 受付、料理人、日誌、社員証を 1 つずつ手で作る代わりに、設計図を渡してまとめて建ててもらう。
 
-デプロイとは、プログラムと、それが動くための仕組み一式を AWS 上に用意し、インターネットから呼び出せる状態にすることだ。お店でいうと、レシピを渡してお店を建ててもらい、開店することに当たる。`sam deploy` では、次の 2 つが起きる。
+デプロイとは、プログラムと、それが動くための仕組み一式を AWS 上に用意し、インターネットから呼び出せる状態にすること。お店でいうと、レシピを渡してお店を建ててもらい、開店することに当たる。`sam deploy` では、次の 2 つが起きる。
 
 1. ビルドしたもの（`app.py` を zip にしたもの）を、SAM 用の S3 バケットに置く（箱を資材置き場に運ぶ）
 2. CloudFormation が `template.yaml` どおりに、Lambda、API Gateway、ロググループ、IAM ロールを作る、または更新する（建設会社が設計図どおりにお店を建てる）
@@ -196,7 +196,7 @@ CloudFormation は AWS のサービスの 1 つで、Lambda や API Gateway と�
 
 このサンプルでは、テンプレート 1 つ（`template.yaml`）から、スタック 1 つ（`aws-lambda-minimal`）と、リソース 6 つが作られる。`template.yaml` に書いているのは `HelloFunction` と `HelloFunctionLogGroup` の 2 つで、残りの 4 つは SAM が追加する（手順書 7 章の変更点の一覧の表）。
 
-CloudFormation が受け取るのは、`template.yaml` そのものではない。`sam build` が作った `.aws-sam/build/template.yaml`（コードの場所などを書き換えたもの）を、`sam deploy` が S3 にアップロードして渡す。CloudFormation は `Transform` に従って SAM の書き方を広げてから、リソースを作る。中身のもとは `template.yaml` だ。
+CloudFormation が受け取るのは、`template.yaml` そのものではない。`sam build` が作った `.aws-sam/build/template.yaml`（コードの場所などを書き換えたもの）を、`sam deploy` が S3 にアップロードして渡す。CloudFormation は `Transform` に従って SAM の書き方を広げてから、リソースを作る。中身のもとは `template.yaml` 。
 
 #### このアカウントのスタック
 
@@ -213,11 +213,11 @@ CloudFormation のコンソールの「スタック」には、次の 2 つが�
 
 `sam deploy` では、SAM がビルドしたコード（zip）とテンプレートを `aws-sam-cli-managed-default` の S3 バケットに置き、CloudFormation がそれを使って `aws-lambda-minimal` のリソースを作る。
 
-ステータスの列の `CREATE_COMPLETE` は「作成に成功し、その後は変更していない」、`UPDATE_COMPLETE` は「作った後に更新され、更新に成功した」という意味だ。
+ステータスの列の `CREATE_COMPLETE` は「作成に成功し、その後は変更していない」、`UPDATE_COMPLETE` は「作った後に更新され、更新に成功した」という意味。
 
 #### スタック名を決めている場所
 
-スタック名は、テンプレートの中身ではなく、デプロイするときに CloudFormation に渡す値だ。`template.yaml` には書かれていない。SAM では、次のどれかで渡す。上にあるものほど優先される。
+スタック名は、テンプレートの中身ではなく、デプロイするときに CloudFormation に渡す値。`template.yaml` には書かれていない。SAM では、次のどれかで渡す。上にあるものほど優先される。
 
 | 渡し方 | 例 |
 |---|---|
@@ -225,13 +225,13 @@ CloudFormation のコンソールの「スタック」には、次の 2 つが�
 | `samconfig.toml` の `stack_name` | `stack_name = "aws-lambda-minimal"` |
 | `sam deploy --guided` の質問への答え | `Stack Name [sam-app]: aws-lambda-minimal` |
 
-このサンプルでは、`--guided` の答えが `samconfig.toml` に保存されているので、`samconfig.toml` で指定している形になっている。同じ `template.yaml` から、`--stack-name` で別の名前を渡すと、別のスタックが作られる。`aws-sam-cli-managed-default` は、SAM CLI が決めている固定の名前だ。`samconfig.toml` の `resolve_s3 = true` が、このスタックの S3 バケットを使う（なければ作る）設定だ。
+このサンプルでは、`--guided` の答えが `samconfig.toml` に保存されているので、`samconfig.toml` で指定している形になっている。同じ `template.yaml` から、`--stack-name` で別の名前を渡すと、別のスタックが作られる。`aws-sam-cli-managed-default` は、SAM CLI が決めている固定の名前。`samconfig.toml` の `resolve_s3 = true` が、このスタックの S3 バケットを使う（なければ作る）設定。
 
 ### SAM を使うと、必ず CloudFormation が使われる
 
-SAM は、CloudFormation を使ってリソースを作る道具だ。`sam deploy` を実行すると、必ず CloudFormation が使われる。CloudFormation を使うかどうかを選ぶ設定はなく、どのファイルにも「CloudFormation を使う」という設定は書いていない。
+SAM は、CloudFormation を使ってリソースを作る道具。`sam deploy` を実行すると、必ず CloudFormation が使われる。CloudFormation を使うかどうかを選ぶ設定はなく、どのファイルにも「CloudFormation を使う」という設定は書いていない。
 
-`sam deploy` は `template.yaml` を CloudFormation に渡して、リソースの作成を依頼する。CloudFormation を直接操作することはない。`sam deploy` の実行中に表示される `CREATE_IN_PROGRESS`、`CREATE_COMPLETE` などは、CloudFormation がリソースを作っている途中経過だ。
+`sam deploy` は `template.yaml` を CloudFormation に渡して、リソースの作成を依頼する。CloudFormation を直接操作することはない。`sam deploy` の実行中に表示される `CREATE_IN_PROGRESS`、`CREATE_COMPLETE` などは、CloudFormation がリソースを作っている途中経過。
 
 設定ではないが、ファイルの中には CloudFormation 用であることを示す記述がある。
 
@@ -241,11 +241,11 @@ SAM は、CloudFormation を使ってリソースを作る道具だ。`sam deplo
 | `template.yaml` | `Transform: AWS::Serverless-2016-10-31` | SAM の短い書き方で書いていることを示す。CloudFormation がこれを本来の書き方に展開する |
 | `samconfig.toml` | `capabilities = "CAPABILITY_IAM"` | CloudFormation に、IAM ロールを作ることを許可する設定 |
 
-`template.yaml` は、SAM の書き方を使って書いた CloudFormation のテンプレートだ。
+`template.yaml` は、SAM の書き方を使って書いた CloudFormation のテンプレート。
 
 ### SAM とは
 
-SAM（Serverless Application Model）は、CloudFormation を Lambda 向けに使いやすくする道具だ。Amazon のクラウド事業の部門である AWS が開発していて、オープンソースとしてソースコードが GitHub に公開されている（`aws/serverless-application-model`、`aws/aws-sam-cli`）。リソースを実際に作るのは CloudFormation で、SAM はその手前の作業を引き受ける。
+SAM（Serverless Application Model）は、CloudFormation を Lambda 向けに使いやすくする道具。Amazon のクラウド事業の部門である AWS が開発していて、オープンソースとしてソースコードが GitHub に公開されている（`aws/serverless-application-model`、`aws/aws-sam-cli`）。リソースを実際に作るのは CloudFormation で、SAM はその手前の作業を引き受ける。
 
 | 部分 | 中身 | このサンプルでの例 |
 |---|---|---|
@@ -262,13 +262,13 @@ SAM を使わずに CloudFormation だけを使う場合と比べると、次の
 | デプロイ | `sam deploy` | `aws cloudformation deploy --stack-name ...` |
 | 設定の保存 | `samconfig.toml` | 毎回コマンドに書く |
 
-お店でいうと、CloudFormation が建設会社で、SAM は建設会社への発注を代行する業者だ。設計図を短く書けるようにし、材料（コード）の運び込みも引き受ける。最後に建てるのは、どちらの場合も CloudFormation だ。
+お店でいうと、CloudFormation が建設会社で、SAM は建設会社への発注を代行する業者。設計図を短く書けるようにし、材料（コード）の運び込みも引き受ける。最後に建てるのは、どちらの場合も CloudFormation 。
 
 #### 対応する範囲
 
-SAM は AWS だけに対応している。リソースを実際に作る CloudFormation が、AWS のリソースを作るための AWS のサービスだからだ。SAM で Azure や Google Cloud のリソースは作れない。
+SAM は AWS だけに対応している。リソースを実際に作る CloudFormation が、AWS のリソースを作るための AWS のサービスのため。SAM で Azure や Google Cloud のリソースは作れない。
 
-AWS の中でも、SAM の短い書き方が使えるのは、Lambda、API Gateway などのサーバーレスのリソースだけだ。ほかの AWS のリソース（データベースやネットワークなど）も、CloudFormation の書き方で同じテンプレートに書けば作れる。
+AWS の中でも、SAM の短い書き方が使えるのは、Lambda、API Gateway などのサーバーレスのリソースだけ。ほかの AWS のリソース（データベースやネットワークなど）も、CloudFormation の書き方で同じテンプレートに書けば作れる。
 
 | 道具 | 対応する範囲 |
 |---|---|
@@ -289,15 +289,15 @@ CloudFormation（SAM）を使わずにリソースを作る方法として、コ
 | もう一度作る | 手順を覚えていないと、同じものを再現できない | 同じテンプレートから、何度でも同じものが作られる（手順書 10 章で消した後に、同じものを作り直せる） |
 | 変更する | どこを変えたかを自分で管理する | 変更前に、増える・変わる・消えるリソースの一覧（変更セット）が表示される |
 
-インフラ（サーバーや API などの仕組み）を、このようにファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。CloudFormation と SAM は、AWS の IaC の道具だ。`sam deploy` は、SAM の書式で短く書いたテンプレートを CloudFormation の書式に展開して、CloudFormation に渡す。リソースを実際に作るのは CloudFormation だ。
+インフラ（サーバーや API などの仕組み）を、このようにファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。CloudFormation と SAM は、AWS の IaC の道具。`sam deploy` は、SAM の書式で短く書いたテンプレートを CloudFormation の書式に展開して、CloudFormation に渡す。リソースを実際に作るのは CloudFormation 。
 
 ### 設計図の中の呼び名（HelloFunction など）
 
-`sam deploy` の出力やコンソールに出る `HelloFunction`、`HelloFunctionRole` などは、AWS が決めた用語ではなく、設計図（`template.yaml`）の中でのリソースの呼び名だ。CloudFormation では LogicalResourceId と呼ぶ。
+`sam deploy` の出力やコンソールに出る `HelloFunction`、`HelloFunctionRole` などは、AWS が決めた用語ではなく、設計図（`template.yaml`）の中でのリソースの呼び名。CloudFormation では LogicalResourceId と呼ぶ。
 
 #### 自分で付けた呼び名
 
-`template.yaml` に書いている名前だ。英単語をつなげて付けていて、別の名前に変えても動く。
+`template.yaml` に書いている名前。英単語をつなげて付けていて、別の名前に変えても動く。
 
 ```yaml
 Resources:
@@ -325,7 +325,7 @@ SAM が自動で追加するリソースには、上の名前に役割を表す�
 
 #### AWS 上の実際の名前
 
-呼び名は設計図の中だけで使う名前だ。AWS 上のリソースには、スタック名と呼び名を元に、別の名前が付く。
+呼び名は設計図の中だけで使う名前。AWS 上のリソースには、スタック名と呼び名を元に、別の名前が付く。
 
 ```
 設計図の中の呼び名   HelloFunction
@@ -340,13 +340,13 @@ AWS 上の名前         aws-lambda-minimal-HelloFunction-XXXXXXXXXXXX
 
 `template.yaml` では、`!Sub` を付けた文字列の中の `${...}` が、デプロイのときに実際の値に置き換わる。
 
-`!Sub`、`!Ref`（CloudFormation の組み込み関数）や `${AWS::Region}`（擬似パラメータ）は、YAML の機能ではなく、CloudFormation の機能だ。`template.yaml` は CloudFormation のテンプレートなので、デプロイのときに CloudFormation が読んで置き換える。CloudFormation が読まない YAML ファイル（GitHub Actions の設定ファイルなど）に同じように書いても、置き換わらない。
+`!Sub`、`!Ref`（CloudFormation の組み込み関数）や `${AWS::Region}`（擬似パラメータ）は、YAML の機能ではなく、CloudFormation の機能。`template.yaml` は CloudFormation のテンプレートなので、デプロイのときに CloudFormation が読んで置き換える。CloudFormation が読まない YAML ファイル（GitHub Actions の設定ファイルなど）に同じように書いても、置き換わらない。
 
 ```yaml
 Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/hello
 ```
 
-`${...}` に入る名前は、次の 3 種類だ。
+`${...}` に入る名前は、次の 3 種類。
 
 | 書き方 | 何を指すか | 定義している場所 | このサンプルでの値の例 |
 |---|---|---|---|
@@ -354,7 +354,7 @@ Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.co
 | `${ServerlessHttpApi}` | SAM が自動で作るリソースの呼び名 | SAM（`Events` の `HttpApi` から作られる） | API の ID（`xxxxxxxxxx` のような 10 文字の英数字） |
 | `${AWS::Region}` | 擬似パラメータ | CloudFormation が最初から用意している（どこにも書かない） | デプロイ先のリージョン（`ap-southeast-2`） |
 
-擬似パラメータ（Pseudo Parameter）は、CloudFormation がスタックを作るときに自動で値を入れる変数だ。宣言しなくても、どのテンプレートでも使える。名前は `AWS::` で始まる。主なものは次のとおり。
+擬似パラメータ（Pseudo Parameter）は、CloudFormation がスタックを作るときに自動で値を入れる変数。宣言しなくても、どのテンプレートでも使える。名前は `AWS::` で始まる。主なものは次のとおり。
 
 | 擬似パラメータ | 入る値 |
 |---|---|
@@ -362,7 +362,7 @@ Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.co
 | `AWS::AccountId` | AWS アカウントの ID |
 | `AWS::StackName` | スタック名 |
 
-URL にリージョンを直接書かずに `${AWS::Region}` を使っているのは、別のリージョンにデプロイしたときにも正しい URL になるようにするためだ。
+URL にリージョンを直接書かずに `${AWS::Region}` を使っているのは、別のリージョンにデプロイしたときにも正しい URL になるようにするため。
 
 参考: [Pseudo parameters reference（AWS 公式）](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html)
 
@@ -381,7 +381,7 @@ URL にリージョンを直接書かずに `${AWS::Region}` を使っている�
 
 ### `--guided` を付ける場合と付けない場合
 
-`--guided` は「案内付き」という意味のオプションだ。お店でいうと、建設会社に初めて依頼するときの「申込書の記入」に当たる。
+`--guided` は「案内付き」という意味のオプション。お店でいうと、建設会社に初めて依頼するときの「申込書の記入」に当たる。
 
 | | `sam deploy --guided` | `sam deploy` |
 |---|---|---|
@@ -441,7 +441,7 @@ SAM や CloudFormation で作ったリソースは、すべてどれかのスタ
 | コンソールで手で作ったリソース | 合わない。スタックを通らず、リージョンの直下にある |
 | AWS が最初から作ったもの（`AccountFullAccessRole` など） | 合わない。どのスタックにも属さない |
 
-スタック自体も、リージョンに属するリソースの 1 つ（CloudFormation のリソース）だ。IAM ロールは例外で、リージョンに属さず、アカウント全体で 1 つのリソースだ。
+スタック自体も、リージョンに属するリソースの 1 つ（CloudFormation のリソース）。IAM ロールは例外で、リージョンに属さず、アカウント全体で 1 つのリソース。
 
 ### AWS アカウントは何の単位か
 
@@ -464,11 +464,11 @@ ARN にはアカウント ID が入るが、プロジェクトの名前は入ら
 
 ### プロジェクトと AWS アカウントが分かれている理由
 
-プロジェクトと AWS アカウントは 1 対 1 で、使う側から見るとほぼ同じものだ。2 つに分かれている理由は、次のように考えられる（AWS の公式の説明ではなく、仕組みからの解釈）。
+プロジェクトと AWS アカウントは 1 対 1 で、使う側から見るとほぼ同じもの。2 つに分かれている理由は、次のように考えられる（AWS の公式の説明ではなく、仕組みからの解釈）。
 
 - AWS アカウントは AWS が始まったときからある仕組みで、権限（IAM）、費用、ARN、制限（SCP）など、すべてのサービスがアカウント ID を前提に作られている。
 - プロジェクトは、新しい登録方式（2026 年 9 月から）で、既存のアカウントを包む外側の枠として加わった。
 - プロジェクトには、アカウントにない情報が付く。チームメンバーとの共有、Free プランとクレジット、リージョンの制限など。
 - 「高度な機能をアクティブ化する」と、中のアカウントは従来のアカウントと同じ扱いになる。そのときも同じアカウントが使われ続けるので、作ったリソースはそのまま残る。
 
-AWS の各サービスから見える単位は AWS アカウントで、プロジェクトは人が管理するための枠だ。
+AWS の各サービスから見える単位は AWS アカウントで、プロジェクトは人が管理するための枠。

@@ -1,9 +1,9 @@
 # 手順書：AWS アカウントの作成からデプロイ、後片付けまで
 
-AWS を初めて使う人が、このリポジトリのサンプルを AWS にデプロイし、動作を確かめ、最後に削除するまでの手順だ。
+AWS を初めて使う人が、このリポジトリのサンプルを AWS にデプロイし、動作を確かめ、最後に削除するまでの手順。
 作業する PC は macOS（Homebrew 導入済み）を想定している。
 
-料金や無料枠、画面の情報は、2026 年 10 月時点の AWS 公式ドキュメントと実際の画面で確かめた内容だ。AWS の料金や画面は変わることがある。
+料金や無料枠、画面の情報は、2026 年 10 月時点の AWS 公式ドキュメントと実際の画面で確かめた内容。AWS の料金や画面は変わることがある。
 
 ## この手順書が前提にしている登録方式
 
@@ -22,7 +22,7 @@ AWS への登録方法は 2 種類ある。この手順書は、2026 年 9 月�
 
 この手順書では、小さなプログラムを AWS（Amazon のクラウド）に載せ、インターネットから呼び出せることを確かめ、最後に AWS から消すまでを一通り行う。
 
-載せるプログラムは、URL に名前を付けて呼び出すと挨拶を返すだけのものだ。
+載せるプログラムは、URL に名前を付けて呼び出すと挨拶を返すだけのもの。
 
 ```
 https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hello, test!"}
@@ -44,9 +44,9 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 
 使う AWS のサービスとコマンドが何をしているかは、お店にたとえた説明が [how-it-works.md](how-it-works.md) にある。
 
-1〜5 章は最初の 1 回だけの準備だ。6〜9 章は、コードを変えるたびに繰り返す流れだ。10 章は、使い終わったときに行う。
+1〜5 章は最初の 1 回だけの準備。6〜9 章は、コードを変えるたびに繰り返す流れ。10 章は、使い終わったときに行う。
 
-終わったときの状態は次のとおりだ。
+終わったときの状態は次のとおり。
 
 - **手元**: このリポジトリのファイルと、AWS へのログイン設定（`~/.aws/`）が残る
 - **AWS**: 10 章でサンプルのスタックは消える。SAM 用のファイル置き場（`aws-sam-cli-managed-default`）は `sam delete` では消えずに残る。10 章の「バケットを消す手順」で消すと、何も残らない
@@ -102,13 +102,13 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 
 ### 初回に表示される案内
 
-初めてコンソールを開くと、「AWS へようこそ。まずエージェントを接続しましょう。」という案内（ステップ 1/3）が表示される。Claude Code や Kiro などの AI エージェントを AWS につなぐための案内だ。この手順書では使わないため、右上の × で閉じても進められる。
+初めてコンソールを開くと、「AWS へようこそ。まずエージェントを接続しましょう。」という案内（ステップ 1/3）が表示される。Claude Code や Kiro などの AI エージェントを AWS につなぐための案内。この手順書では使わないため、右上の × で閉じても進められる。
 
 ### プロジェクトの名前
 
 最初のプロジェクトには、AWS が自動で名前を付ける。この手順書を作ったときのアカウントでは「Just Ship It」だった（英語で「とにかく出荷しよう」という意味の決まり文句）。付けられる名前は、アカウントによって異なる場合がある。
 
-コンソールの右上（例:「Just Ship It ▼」）や、ホームの見出し（例:「コンソールのホーム | Just Ship It」）に表示されているのは、このプロジェクトの名前だ。
+コンソールの右上（例:「Just Ship It ▼」）や、ホームの見出し（例:「コンソールのホーム | Just Ship It」）に表示されているのは、このプロジェクトの名前。
 
 名前は、コンソールのホームの「プロジェクト管理」（AWS Settings）からいつでも変えられる。名前を変えても、プロジェクトの中身や動作は変わらない。
 
@@ -218,7 +218,7 @@ AWS 設定（<https://settings.aws.com>）の「プロジェクト」の画面�
 1. 「AWS Budgets を使用してコスト予算をセットアップする」のリンクを開く。
 2. 画面の案内に沿って、月次のコスト予算を作る（予算額は 1 USD、通知先は自分のメールアドレスなど）。
 
-予算の作成とメール通知は無料だ。
+予算の作成とメール通知は無料。
 
 ## 5. CLI のインストールとログイン
 
@@ -240,7 +240,7 @@ sam --version
 
 `aws login` は AWS CLI 2.32.0 以上で使える。古い版が入っている場合は `brew upgrade awscli` で更新する。
 
-SAM CLI について、AWS 公式の macOS 向けインストール方法は `.pkg` インストーラーだ（[Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)）。Homebrew 版はコミュニティが管理していて、AWS 公式のドキュメントにも Homebrew を使う方法として記載がある。この手順書は Homebrew 版を使う。
+SAM CLI について、AWS 公式の macOS 向けインストール方法は `.pkg` インストーラー（[Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)）。Homebrew 版はコミュニティが管理していて、AWS 公式のドキュメントにも Homebrew を使う方法として記載がある。この手順書は Homebrew 版を使う。
 
 ### ログイン
 
@@ -299,7 +299,7 @@ aws sts get-caller-identity
 }
 ```
 
-`AccountFullAccessRole` は、新しい登録方式で AWS が用意する、プロジェクトの管理者の権限だ。
+`AccountFullAccessRole` は、新しい登録方式で AWS が用意する、プロジェクトの管理者の権限。
 
 参考: [Connect an AI coding tool（`aws login` の説明を含む）](https://docs.aws.amazon.com/accounts/latest/reference/connect-ai-coding-tool.html)、[Login for AWS local development using console credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html)
 
@@ -315,9 +315,9 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
-`python3.14` とバージョンまで書いているのは、Lambda のランタイム（`template.yaml` の `python3.14`）と同じバージョンでテストするためだ。バージョンを付けない `python3` は、PC によって別のバージョンを指す。たとえば、Homebrew の標準の Python が 3.15 に変わった後の Mac では、Apple が入れた Python 3.9（`/usr/bin/python3`）を指す。
+`python3.14` とバージョンまで書いているのは、Lambda のランタイム（`template.yaml` の `python3.14`）と同じバージョンでテストするため。バージョンを付けない `python3` は、PC によって別のバージョンを指す。たとえば、Homebrew の標準の Python が 3.15 に変わった後の Mac では、Apple が入れた Python 3.9（`/usr/bin/python3`）を指す。
 
-次のように表示されれば成功だ。
+次のように表示されれば成功。
 
 ```
 ....                                                                     [100%]
@@ -334,9 +334,9 @@ pytest
 sam build
 ```
 
-`template.yaml` を読み、`src/` のコードを `.aws-sam/build/` にまとめる。`Build Succeeded` と表示されれば成功だ。
+`template.yaml` を読み、`src/` のコードを `.aws-sam/build/` にまとめる。`Build Succeeded` と表示されれば成功。
 
-`sam deploy` がデプロイするのは、`.aws-sam/build/` の中身だ。コードや `template.yaml` を変えた後は、デプロイの前に毎回 `sam build` を実行する。実行しないと、前回ビルドした内容がデプロイされる。
+`sam deploy` がデプロイするのは、`.aws-sam/build/` の中身。コードや `template.yaml` を変えた後は、デプロイの前に毎回 `sam build` を実行する。実行しないと、前回ビルドした内容がデプロイされる。
 
 `sam build` は、`template.yaml` のランタイム（`python3.14`）と同じバージョンの Python が PC にあることを確かめる。`python3.14 --version` で `Python 3.14.x` と表示されない場合は、`brew install python@3.14` で入れる。
 
@@ -361,7 +361,7 @@ ls samconfig.toml
 sam deploy --guided
 ```
 
-`--guided` は「案内付き」という意味のオプションだ。付けると、SAM がデプロイの設定を質問の形で 1 つずつ聞く。次の質問が出るのは、`--guided` を付けたためだ（詳しくは、この節の最後の「`--guided` と `samconfig.toml`」にある）。
+`--guided` は「案内付き」という意味のオプション。付けると、SAM がデプロイの設定を質問の形で 1 つずつ聞く。次の質問が出るのは、`--guided` を付けたため（詳しくは、この節の最後の「`--guided` と `samconfig.toml`」にある）。
 
 | 質問 | 意味 | 回答 |
 |---|---|---|
@@ -391,9 +391,9 @@ resolve_s3 = true                     # SAM 用の S3 バケットを自動で�
 s3_prefix = "aws-lambda-minimal"      # バケットの中でファイルを置くフォルダの名前
 ```
 
-`sam deploy` は、`samconfig.toml` があると中身を読み込んで使う。このため、2 回目以降は `--guided` を付けずに `sam deploy` だけで、同じ設定でデプロイできる。スタックを `sam delete` で削除した後にもう一度デプロイする場合も同じだ。
+`sam deploy` は、`samconfig.toml` があると中身を読み込んで使う。このため、2 回目以降は `--guided` を付けずに `sam deploy` だけで、同じ設定でデプロイできる。スタックを `sam delete` で削除した後にもう一度デプロイする場合も同じ。
 
-`--guided` をもう一度付けるのは、次の場合だ。
+`--guided` をもう一度付けるのは、次の場合。
 
 - スタック名やリージョンなど、設定を変えたいとき
 - `samconfig.toml` がないとき（削除した場合や、別の PC でリポジトリを取得した場合など）
@@ -402,11 +402,11 @@ s3_prefix = "aws-lambda-minimal"      # バケットの中でファイルを置�
 
 #### 「認証がない」という確認について
 
-`HelloFunction has no authentication. Is this okay?`（または `may not have authorization defined`）は、「この API は、URL を知っている人なら誰でも呼び出せるが、よいか」という確認だ。
+`HelloFunction has no authentication. Is this okay?`（または `may not have authorization defined`）は、「この API は、URL を知っている人なら誰でも呼び出せるが、よいか」という確認。
 
 このサンプルの API は挨拶の文字列を返すだけで、秘密の情報や書き込みの処理を持たないため、`y` と答える。`N` と答えるとデプロイは中止される。
 
-認証のない API は、URL が知られると誰でも何度でも呼び出せる。呼び出された回数だけクレジットが減る可能性があるため、動作を確かめたら 10 章の手順で削除しておくと安心だ。
+認証のない API は、URL が知られると誰でも何度でも呼び出せる。呼び出された回数だけクレジットが減る可能性があるため、動作を確かめたら 10 章の手順で削除しておくと安心。
 
 #### デプロイの流れ
 
@@ -435,7 +435,7 @@ Operation       LogicalResourceId                          ResourceType         
 Deploy this changeset? [y/N]:
 ```
 
-列の意味は次のとおりだ。
+列の意味は次のとおり。
 
 | 列 | 意味 |
 |---|---|
@@ -444,7 +444,7 @@ Deploy this changeset? [y/N]:
 | ResourceType | リソースの種類 |
 | Replacement | `* Modify` のとき、作り直しになるか（`True`）、そのまま変更できるか（`False`）。`+ Add` では `N/A` |
 
-各行のリソースは次のとおりだ。`template.yaml` に書いているのは `HelloFunction` と `HelloFunctionLogGroup` の 2 つで、残りの 4 つは SAM が自動で追加する。
+各行のリソースは次のとおり。`template.yaml` に書いているのは `HelloFunction` と `HelloFunctionLogGroup` の 2 つで、残りの 4 つは SAM が自動で追加する。
 
 | LogicalResourceId | 種類 | 役割 | `template.yaml` に書いているか |
 |---|---|---|---|
@@ -455,7 +455,7 @@ Deploy this changeset? [y/N]:
 | `ServerlessHttpApiApiGatewayDefaultStage` | API Gateway のステージ | API を公開して呼び出せる状態にするための設定 | SAM が追加 |
 | `HelloFunctionHelloApiPermission` | Lambda の呼び出し許可 | API Gateway が Lambda を呼び出してよいという許可 | SAM が追加 |
 
-一覧で確かめる点は、意図しない `- Remove`（削除）や、`Replacement` が `True`（作り直し）の行がないかだ。問題がなければ `y`、やめる場合は `n` と答える。`n` と答えると、AWS には何も変更されない。
+一覧で確かめる点は、意図しない `- Remove`（削除）や、`Replacement` が `True`（作り直し）の行がないか。問題がなければ `y`、やめる場合は `n` と答える。`n` と答えると、AWS には何も変更されない。
 
 ```
 Key                 HelloApiUrl
@@ -482,7 +482,7 @@ sam deploy
 | スタックがない（10 章の `sam delete` の後など） | すべての行が `+ Add` になる | `CREATE_COMPLETE` |
 | 前回から何も変わっていない | 一覧は出ず、`No changes to deploy` と表示されて終わる | 変わらない |
 
-`sam delete` の後にもう一度デプロイした場合は、API の URL が前回と変わる。API が作り直されて、新しい ID が付くためだ。
+`sam delete` の後にもう一度デプロイした場合は、API の URL が前回と変わる。API が作り直されて、新しい ID が付くため。
 
 コードを変更して再デプロイする例は、9 章にある。
 
@@ -494,7 +494,7 @@ sam deploy
 
 次のコマンドは、デプロイで作られた URL を AWS から取り出して `URL` という変数に入れ、それを使って呼び出す。
 
-`# 出力の例:` の行は、直前のコマンドの出力の例だ。
+`# 出力の例:` の行は、直前のコマンドの出力の例。
 
 ```bash
 URL=$(aws cloudformation describe-stacks --stack-name aws-lambda-minimal --query "Stacks[0].Outputs[?OutputKey=='HelloApiUrl'].OutputValue" --output text)
@@ -534,7 +534,7 @@ setopt interactivecomments
 | `curl "$URL?name=test"` | `GET /hello` と `name=test` | `{"message": "Hello, test!"}` |
 | `curl "$URL"` | `GET /hello` だけ | `{"message": "Hello, World!"}` |
 
-2 つ実行しているのは、名前を渡した場合と、渡さなかった場合（`World` になる）の両方を確かめるためだ。
+2 つ実行しているのは、名前を渡した場合と、渡さなかった場合（`World` になる）の両方を確かめるため。
 
 `Hello, test!` という文字列が `src/app.py` のどこで作られるかは、[仕組みの説明](how-it-works.md)の 3 章「返事の文字列ができるまで」にある。
 
@@ -548,7 +548,7 @@ setopt interactivecomments
 
 ### ログを見る（CloudWatch Logs）
 
-Lambda の上で `print` した内容は、curl の返事には入らない。curl が受け取るのは、`lambda_handler` の戻り値の `"body"` だけだ。`print` の出力は、Lambda が CloudWatch Logs に書く。
+Lambda の上で `print` した内容は、curl の返事には入らない。curl が受け取るのは、`lambda_handler` の戻り値の `"body"` だけ。`print` の出力は、Lambda が CloudWatch Logs に書く。
 
 `src/app.py` の `lambda_handler` の中（`name = ...` の行の後）には、`name` の値をログに出す次の行が入っている。curl で呼ぶたびに、この行が実行される。
 
@@ -576,7 +576,7 @@ sam logs --stack-name aws-lambda-minimal -n HelloFunction --start-time '5min ago
 
 #### ログの読み方
 
-curl で `?name=test` を付けて 2 回、付けずに 2 回呼んだときのログの例だ（`RequestId` などは省略）。
+curl で `?name=test` を付けて 2 回、付けずに 2 回呼んだときのログの例（`RequestId` などは省略）。
 
 ```text
 INIT_START Runtime Version: python:3.14...
@@ -607,7 +607,7 @@ REPORT RequestId: ...
 | `END` | `lambda_handler` の実行が終わった |
 | `REPORT` | 実行時間（`Duration`）、料金の計算に使う時間（`Billed Duration`）、使ったメモリ（`Max Memory Used`） |
 
-一番上の `INIT_START` は、Lambda が起動したとき（コールドスタート）に 1 回だけ出る行だ。最初の `REPORT` にだけ、起動にかかった時間 `Init Duration` が付く。2 回目以降は起動済みの Lambda が使い回されるため、`INIT_START` の行は出ない。しばらく呼ばれずに Lambda が片付けられると、次の呼び出しで新しいログストリームが作られ、`INIT_START` から始まる。起動と呼び出しの違いは、[仕組みの説明](how-it-works.md)の 3 章「起動したときと、注文が来たとき」にある。
+一番上の `INIT_START` は、Lambda が起動したとき（コールドスタート）に 1 回だけ出る行。最初の `REPORT` にだけ、起動にかかった時間 `Init Duration` が付く。2 回目以降は起動済みの Lambda が使い回されるため、`INIT_START` の行は出ない。しばらく呼ばれずに Lambda が片付けられると、次の呼び出しで新しいログストリームが作られ、`INIT_START` から始まる。起動と呼び出しの違いは、[仕組みの説明](how-it-works.md)の 3 章「起動したときと、注文が来たとき」にある。
 
 ## 9. コードを変更して再デプロイする
 
@@ -629,7 +629,7 @@ sam deploy
 
 ### ビルドとデプロイが必要な場合
 
-`src/app.py` を変えても、AWS 上の Lambda 関数のコードは変わらない。AWS に反映するには、`sam build` と `sam deploy` の両方が必要だ。
+`src/app.py` を変えても、AWS 上の Lambda 関数のコードは変わらない。AWS に反映するには、`sam build` と `sam deploy` の両方が必要。
 
 | コマンド | 必要な理由 |
 |---|---|
@@ -687,7 +687,7 @@ curl で URL を呼ぶと、接続できないエラーになる。
 
 ### SAM 用の S3 バケットについて
 
-`sam delete` は、7 章で自動で作られた `aws-sam-cli-managed-default` スタックとその S3 バケットを削除しない。このバケットを、同じリージョンにあるほかの SAM アプリもデプロイのときに使うからだ。
+`sam delete` は、7 章で自動で作られた `aws-sam-cli-managed-default` スタックとその S3 バケットを削除しない。このバケットを、同じリージョンにあるほかの SAM アプリもデプロイのときに使うため。
 
 #### バケットとは
 
@@ -713,7 +713,7 @@ S3 バケット（aws-sam-cli-managed-default のもの）
 └─ app-b/                ← アプリ B のファイル
 ```
 
-このサンプルの `sam delete` で消してよいのは、このサンプルのものだけだ。
+このサンプルの `sam delete` で消してよいのは、このサンプルのものだけ。
 
 | 消すもの | 消してよいか |
 |---|---|
@@ -725,7 +725,7 @@ S3 バケット（aws-sam-cli-managed-default のもの）
 
 #### 残した場合の費用
 
-スタックとバケットは、あるだけでは費用がかからない。費用がかかるのは、バケットの中のファイルだ。
+スタックとバケットは、あるだけでは費用がかからない。費用がかかるのは、バケットの中のファイル。
 
 | もの | あるだけで費用がかかるか |
 |---|---|
@@ -734,7 +734,7 @@ S3 バケット（aws-sam-cli-managed-default のもの）
 | バケットの中のファイル | 保存している量に応じてかかる |
 | バケットのアクセス設定（ポリシー） | かからない |
 
-`sam delete` の 2 つ目の質問に `y` と答えると、このサンプルのファイルは消える。ただし、このバケットはバージョニングが有効なので、消したファイルの古いバージョンが残り、保存料金の対象になることがある。このサンプルの量では数 KB から数 MB で、料金はほぼゼロだ。Free プランでは請求は発生せず、かかった分はクレジットから引かれる。
+`sam delete` の 2 つ目の質問に `y` と答えると、このサンプルのファイルは消える。ただし、このバケットはバージョニングが有効なので、消したファイルの古いバージョンが残り、保存料金の対象になることがある。このサンプルの量では数 KB から数 MB で、料金はほぼゼロ。Free プランでは請求は発生せず、かかった分はクレジットから引かれる。
 
 費用がかかるものを何も残さない場合は、次の手順でバケットとスタックを消す。
 
@@ -745,16 +745,16 @@ S3 バケット（aws-sam-cli-managed-default のもの）
 1. S3 のコンソールで `aws-sam-cli-managed-default-samclisourcebucket-...` を選び、「空にする」を実行する（このバケットはバージョニングが有効なので、「空にする」で古いバージョンも含めて消える）。
 2. CloudFormation のコンソールで `aws-sam-cli-managed-default` スタックを選び、「削除」を実行する。
 
-スタックを削除すると、中の S3 バケットも削除される。ただし、バケットが空であることが条件だ。
+スタックを削除すると、中の S3 バケットも削除される。ただし、バケットが空であることが条件。
 
 | バケットの状態 | スタックを削除すると |
 |---|---|
 | 空（古いバージョンも含めて何もない） | バケットも一緒に消える |
 | 中にファイルが残っている | バケットを消せず、スタックの削除が失敗する（`DELETE_FAILED`） |
 
-AWS は、中身が入った S3 バケットの削除を受け付けない。CloudFormation もこの決まりに従うので、中身を消してからバケットを削除するようなことはしない。手順の 1 で先に「空にする」を実行するのは、このためだ。
+AWS は、中身が入った S3 バケットの削除を受け付けない。CloudFormation もこの決まりに従うので、中身を消してからバケットを削除するようなことはしない。手順の 1 で先に「空にする」を実行するのは、このため。
 
-SAM CLI 1.167.0 のソースで、このスタックのテンプレートを確かめた結果は次のとおりだ。
+SAM CLI 1.167.0 のソースで、このスタックのテンプレートを確かめた結果は次のとおり。
 
 - バケットに、スタックを消しても残す設定（`DeletionPolicy: Retain`）は付いていない。そのため、空であればスタックと一緒に消える。
 - バージョニングが有効（`VersioningConfiguration: Enabled`）になっている。そのため、画面で空に見えても、消したファイルの古いバージョンが残っていると空にならない。
@@ -787,7 +787,7 @@ User: arn:aws:sts::123456789012:assumed-role/AccountFullAccessRole/... is not au
 because no identity-based policy allows the action / a service control policy explicitly denies the action
 ```
 
-新しい登録方式では、AWS が管理する制限（サービスコントロールポリシー、SCP）がかかっている。主な原因は次の 2 つだ。
+新しい登録方式では、AWS が管理する制限（サービスコントロールポリシー、SCP）がかかっている。主な原因は次の 2 つ。
 
 - **プロジェクトのリージョン以外を操作している**: CLI のリージョンを `aws configure get region` で確かめる。違っていれば `aws configure set region ap-southeast-2`（プロジェクトのリージョン）で直す。`sam deploy` のリージョンは `samconfig.toml` の `region` に保存されている。
 - **Free プランで使えないサービスを使おうとしている**: 使えるサービスは [Supported AWS services for Sign up for AWS (new)](https://docs.aws.amazon.com/accounts/latest/reference/supported-services-sign-up-new.html) に一覧がある。このサンプルが使うサービスは、すべて Free プランで使える。
