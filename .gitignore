@@ -1,0 +1,17 @@
+.DS_Store
+
+# SAM のビルド結果（sam build が作る）
+.aws-sam/
+
+# Python
+__pycache__/
+.venv/
+.pytest_cache/
+
+# Claude Code の内部管理用ディレクトリ（プロジェクトのソースではない）。
+# ただし運用ルール .claude/CLAUDE.md だけは例外的に追跡する。
+.claude/*
+!.claude/CLAUDE.md
+
+# 個人用の非公開フォルダー。まるごとコミットしない。
+private/

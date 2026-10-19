@@ -1,0 +1,110 @@
+# SAM テンプレート（お店の設計図）。
+# `sam deploy` でこのファイルを CloudFormation に渡すと、ここに書いたリソースがまとめて作られる。
+# 説明は docs/how-it-works.md にある。
+#
+# このファイルで使っている CloudFormation の機能（YAML の機能ではなく、デプロイ時に CloudFormation が処理する）:
+#   組み込み関数（値を置き換える命令）
+#     !Sub "...${名前}..."  文字列の中の ${...} を実際の値に置き換える
+#                           （HelloFunctionLogGroup の LogGroupName、Outputs の HelloApiUrl）
+#     !Ref 名前              リソースの実際の名前や ID に置き換える
+#                           （Outputs の HelloFunctionName）
+#   擬似パラメータ（CloudFormation が最初から用意している変数。定義しなくても使える）
+#     AWS::Region           デプロイ先のリージョン（Outputs の HelloApiUrl）
+#   リソースタイプ（Type: の後ろに書く、作るリソースの種類。「AWS::サービス名::リソース名」の形）
+#     AWS::Serverless::Function  Lambda 関数（SAM の書き方。HelloFunction）
+#     AWS::Logs::LogGroup        CloudWatch Logs のロググループ（HelloFunctionLogGroup）
+#   テンプレートの宣言
+#     AWSTemplateFormatVersion  CloudFormation のテンプレートであることを示す
+#     Transform                 SAM の書き方で書いていることを示す（AWS::Serverless-2016-10-31）
+#
+#   「AWS::」で始まる名前は、すべて CloudFormation の機能（CloudFormation のテンプレートの書き方の一部）で、
+#   このファイルの中で定義したものではない。デプロイのときに CloudFormation が解釈する。
+#   AWS::Serverless::Function は SAM が決めたリソースタイプだが、Transform を通して CloudFormation の処理の中で展開される。
+#   「AWS::」は AWS 専用で、自分で「AWS::」で始まる名前を作ることはできない。
+#   このファイルで付けた名前（HelloFunction、HelloApi など）には「AWS::」が付かない。
+#   「AWS::」で始まる名前には、擬似パラメータ・リソースタイプ・Transform の名前の 3 種類がある。
+#   頭の部分は同じなので、書いてある場所で区別する（${AWS::...}、Type: AWS::...、Transform: AWS::...）。
+
+# テンプレートの書式のバージョン。CloudFormation の決まりで、この値で固定。
+AWSTemplateFormatVersion: "2010-09-09"
+# このファイルを SAM の書式で書いていることを示す。
+# CloudFormation が SAM の短い書き方を、本来の長い書き方に展開する。
+Transform: AWS::Serverless-2016-10-31
+# スタックの説明。CloudFormation の画面の「説明」に表示される。
+# 日本語は画面で「?」になるため、英語で書く。
+# 「>-」は YAML の書き方。長い文字列を複数行に分けて書くときに使う。
+#   >  次の行から、字下げした行を値として読む。行と行の間の改行は空白 1 つになる。
+#   -  値の最後の改行を取り除く。
+# そのため、下の 2 行は 1 行の文字列「aws-lambda-minimal: ... (API Gateway HTTP API + Lambda)」になる。
+Description: >-
+  aws-lambda-minimal: minimal API that returns JSON for GET /hello
+  (API Gateway HTTP API + Lambda)
+
+# すべての Lambda 関数に共通する設定。
+Globals:
+  Function:
+    # Python のバージョン。`sam build` は、手元にも同じバージョン（python3.14）があることを確かめる。
+    Runtime: python3.14
+    # CPU の種類。arm64（AWS Graviton）は x86_64 より料金が安い。
+    Architectures:
+      - arm64
+    # 使えるメモリの量（MB）。128 が最小。
+    MemorySize: 128
+    # 1 回の実行で待つ最大の秒数。超えるとエラーで打ち切られる。
+    Timeout: 10
+
+# 作るリソースの一覧。
+Resources:
+  # Lambda 関数（料理人）。「HelloFunction」はこのテンプレートの中での呼び名。
+  # 実際の関数名は「スタック名-HelloFunction-ランダムな文字列」になる。
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # コードのあるフォルダ。`sam build` がこのフォルダの中身をまとめる。
+      CodeUri: src/
+      # 呼び出す関数（ハンドラ）。「ファイル名（.py を除く）.関数名」で書く。
+      # app.lambda_handler は、src/app.py の中の関数 lambda_handler（def lambda_handler(event, context)）を指す。
+      # リクエストが来るたびに、この関数が呼び出される。
+      Handler: app.lambda_handler
+      # この関数を呼び出すきっかけ（イベント）。
+      Events:
+        HelloApi:
+          # API Gateway の HTTP API（受付の窓口）。API Gateway の正式な名前は Amazon API Gateway（AWS のサービス）。
+          # ここに書くだけで、SAM が API Gateway を作り、Lambda とつなぐ。
+          # 作られた API は「ServerlessHttpApi」という呼び名になる（下の Outputs で使う）。
+          Type: HttpApi
+          Properties:
+            # GET /hello へのリクエストで、この関数が呼ばれる。
+            Path: /hello
+            Method: GET
+      # Lambda 用の IAM ロール（社員証）は書いていないが、SAM が自動で作る。
+
+  # CloudWatch Logs のロググループ（業務日誌）。
+  # Lambda が自動で作るロググループは保存期間が無期限になる。
+  # 同じ名前のロググループを先に作り、保存期間を 7 日にする。
+  # スタックを削除すると、このロググループも削除される。
+  HelloFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      # Lambda のログの置き場所は「/aws/lambda/関数名」と決まっている。
+      # !Sub は ${...} を実際の値に置き換える。${HelloFunction} は実際の関数名になる。
+      LogGroupName: !Sub /aws/lambda/${HelloFunction}
+      RetentionInDays: 7
+
+# デプロイ後に表示する値。`sam deploy` の最後と、CloudFormation の「出力」タブに出る。
+# 説明（Description）は、日本語だと画面で「?」になるため、英語で書く。
+Outputs:
+  # API の URL。手順書 8 章で curl に使う。
+  # ${ServerlessHttpApi} は API の ID に置き換わる（SAM が自動で作る HTTP API の呼び名）。
+  # ${AWS::Region} はデプロイ先のリージョン（samconfig.toml の region。例: ap-southeast-2）に置き換わる。
+  # AWS::Region は「擬似パラメータ」と呼ばれ、CloudFormation が最初から用意している変数。
+  # このファイルのどこにも定義していないが、どのテンプレートでも使える。
+  # リージョンを直接書かずにこれを使うと、別のリージョンにデプロイしても正しい URL になる。
+  HelloApiUrl:
+    Description: URL of GET /hello
+    Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/hello
+  # Lambda 関数の実際の名前。コンソールで関数を探すときに使う。
+  # !Ref HelloFunction は、関数の実際の名前になる。
+  HelloFunctionName:
+    Description: Name of the Lambda function
+    Value: !Ref HelloFunction
