@@ -24,6 +24,8 @@ def lambda_handler(event, context):
     params = event.get("queryStringParameters") or {}
     # name がない場合と、空文字（?name=）の場合は "World" を使う。
     name = params.get("name") or "World"
+    print(f"event:{{ {event} }}  @lambda_handler in app.py")
+    print(f"context:{{ {context} }}  @lambda_handler in app.py")
     print(f"name:{{ {name} }}  @lambda_handler in app.py")
 
     # 辞書形式
