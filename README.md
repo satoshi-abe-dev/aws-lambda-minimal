@@ -41,7 +41,7 @@ flowchart LR
 │   └── terraform.md        # Terraform のメモ（SAM との違い）
 ├── template.yaml           # SAM テンプレート
 ├── requirements-dev.txt    # 開発用の依存（pytest）
-├── samconfig.toml          # sam deploy の設定（初回の sam deploy --guided で作られる）
+├── samconfig.toml          # sam deploy の設定（スタック名、リージョンなど）
 ├── LICENSE                 # MIT License
 └── .gitignore
 ```
@@ -73,12 +73,14 @@ flowchart LR
    aws sts get-caller-identity
    ```
 
-3. ビルドとデプロイ（初回は質問に答える。詳細は手順書の 7 章）
+3. ビルドとデプロイ（詳細は手順書の 7 章）
 
    ```bash
    sam build
-   sam deploy --guided
+   sam deploy
    ```
+
+   `samconfig.toml` のリージョンは `ap-southeast-2`。プロジェクトのリージョンが違う場合は、`sam deploy` の代わりに `sam deploy --guided` を実行し、質問に答えて設定を作り直す。
 
 4. 動作確認（デプロイで作られた API の URL を取り出して呼び出す）
 
