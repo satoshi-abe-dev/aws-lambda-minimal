@@ -14,21 +14,21 @@
 
 ### 「サーバーの管理が要らない」の意味
 
-プログラムを動かすには、それを実行するコンピュータ（サーバー）が要る。Lambda では、サーバーの用意と世話を AWS が受け持つ。Lambda 上で動かすために利用者が用意するのは、コード（`src/app.py`）と設定（`template.yaml`）の 2 つ。リポジトリにはほかに、`samconfig.toml`（`sam deploy` の設定の保存）と `requirements-dev.txt`（手元のテストに使う pytest の一覧）があるが、どちらも手元での作業のためのファイルで、Lambda 上では使われない。
+プログラムを動かすには、それを実行するコンピュータ（サーバー）が要る。Lambda は AWS が提供するサービスの 1 つで、サーバーの用意と世話は Lambda が行う。Lambda 上で動かすために利用者が用意するのは、コード（`src/app.py`）と設定（`template.yaml`）の 2 つ。リポジトリにはほかに、`samconfig.toml`（`sam deploy` の設定の保存）と `requirements-dev.txt`（手元のテストに使う pytest の一覧）があるが、どちらも手元での作業のためのファイルで、Lambda 上では使われない。
 
 比べる相手として、AWS の EC2（Elastic Compute Cloud、仮想サーバーを借りるサービス）で同じことをする場合を並べる。
 
 | 作業 | EC2（サーバーを借りる） | Lambda |
 |---|---|---|
 | 性能と台数 | どの性能のサーバーを何台借りるかを決める | 決めない。メモリの量（`template.yaml` の `MemorySize`）だけを指定する |
-| OS | Linux などを入れ、セキュリティ更新を当て続ける | AWS が用意し、更新する |
-| Python | 自分で入れ、更新する | `template.yaml` の `Runtime: python3.14` で指定すると、AWS が用意する |
-| プログラムの起動 | 起動しておき、止まったら起動し直す仕組みを作る | リクエストが来たときに AWS が実行環境を用意し、`lambda_handler` を呼ぶ |
-| アクセスの増減 | 混んだら台数を増やし、空いたら減らす | 同時に来たリクエストの数に合わせて、AWS が実行環境を増やす |
-| 故障 | 壊れたサーバーから別のサーバーに移す | AWS が対応する |
+| OS | Linux などを入れ、セキュリティ更新を当て続ける | Lambda が用意し、更新する |
+| Python | 自分で入れ、更新する | `template.yaml` の `Runtime: python3.14` で指定すると、Lambda が用意する |
+| プログラムの起動 | 起動しておき、止まったら起動し直す仕組みを作る | リクエストが来たときに Lambda が実行環境を用意し、`lambda_handler` を呼ぶ |
+| アクセスの増減 | 混んだら台数を増やし、空いたら減らす | 同時に来たリクエストの数に合わせて、Lambda が実行環境を増やす |
+| 故障 | 壊れたサーバーから別のサーバーに移す | Lambda が対応する |
 | 料金 | 起動している間はずっとかかる（アクセスがなくてもかかる） | 実行した回数と時間の分だけかかる |
 
-お店でいうと、EC2 は店舗を借りて料理人を常駐させる形。客が来なくても家賃と人件費がかかり、店舗の修繕や、混んだときの人手集めも自分で行う。Lambda は、注文が入ったときだけ AWS が厨房と料理人を用意し、レシピどおりに作る形で、作った回数と時間の分だけ払う。
+お店でいうと、EC2 は店舗を借りて料理人を常駐させる形。客が来なくても家賃と人件費がかかり、店舗の修繕や、混んだときの人手集めも自分で行う。Lambda は料理人で、注文が入ったときだけ働き、レシピ（`src/app.py`）どおりに作る。厨房（実行環境）も Lambda が用意する。料金は、作った回数と時間の分だけかかる。
 
 このような仕組みを「サーバーレス（serverless）」と呼ぶ。サーバーがなくなるわけではなく、AWS の側で動いている。利用者がサーバーを扱わない、という意味の呼び名。
 
@@ -39,7 +39,7 @@
 | 実行時間の上限 | 1 回の実行は最大 15 分。このサンプルでは `template.yaml` の `Timeout: 10` で 10 秒にしている |
 | 最初の呼び出しの遅れ | しばらく呼ばれていないと、次の呼び出しで実行環境の準備から始まり、その分だけ返事が遅くなる（コールドスタート。3 章の「起動したときと、注文が来たとき」） |
 | 状態が残らない | 実行環境は片付けられることがあり、メモリに置いた値は次の呼び出しで残っていないことがある。残したいデータは S3 やデータベースに置く |
-| Python のバージョン | 小さな更新は AWS が当てるが、`python3.14` のようなバージョン自体のサポートには期限がある。期限が近づいたら `Runtime` を新しいバージョンに書き換えてデプロイし直す |
+| Python のバージョン | 小さな更新は Lambda が当てるが、`python3.14` のようなバージョン自体のサポートには期限がある。期限が近づいたら `Runtime` を新しいバージョンに書き換えてデプロイし直す |
 
 ## 2. 注文が来たときの流れ（手順書 8 章の `curl`）
 
@@ -99,7 +99,7 @@ Lambda は一度起動すると、しばらく待機する。待機中に次の�
 | | 中身 | お店でいうと |
 |---|---|---|
 | `event` | リクエストの情報（URL の `?name=test` など）が入った辞書 | 注文票 |
-| `context` | 残りの実行時間など、Lambda 側の情報。このサンプルでは使っていない | 厨房の状況メモ |
+| `context` | 残りの実行時間など、Lambda 側の情報。このサンプルでは、ログに出すだけで処理には使っていない | 厨房の状況メモ |
 | 戻り値の辞書 | ステータスコード、ヘッダー、本文。API Gateway がこれを HTTP の返事に変える | 出来上がった料理 |
 
 `tests/test_app.py` は、この `event` を自分で作って `lambda_handler` に直接渡している。このため、AWS を使わずに Mac の中でテストできる。
@@ -148,7 +148,7 @@ curl に表示されるのは、`body` の文字列だけ。`tests/test_app.py` 
 
 受付、料理人、日誌、社員証を 1 つずつ手で作る代わりに、設計図を渡してまとめて建ててもらう。
 
-デプロイとは、プログラムと、それが動くための仕組み一式を AWS 上に用意し、インターネットから呼び出せる状態にすること。お店でいうと、レシピを渡してお店を建ててもらい、開店することに当たる。`sam deploy` では、次の 2 つが起きる。
+デプロイとは、プログラムと、それが動くための仕組み一式を AWS 上に用意し、インターネットから呼び出せる状態にすること。お店でいうと、設計図とレシピを渡してお店を建ててもらい、開店することに当たる。`sam deploy` では、次の 2 つが起きる。
 
 1. ビルドしたもの（`app.py` を zip にしたもの）を、SAM 用の S3 バケットに置く（箱を資材置き場に運ぶ）
 2. CloudFormation が `template.yaml` どおりに、Lambda、API Gateway、ロググループ、IAM ロールを作る、または更新する（建設会社が設計図どおりにお店を建てる）
@@ -160,7 +160,7 @@ curl に表示されるのは、`body` の文字列だけ。`tests/test_app.py` 
 | `template.yaml` | 設計図 | 「受付 1 つ、料理人 1 人、日誌 1 冊」のように、作るものが書いてある |
 | CloudFormation | 建設会社 | 設計図どおりに、全部まとめて建てる。撤去も全部まとめて行う |
 | スタック | 建ったお店一式 | このサンプルでは `aws-lambda-minimal` という名前 |
-| SAM（Serverless Application Model） | 建設会社への発注を代行する業者 | CloudFormation を Lambda 向けに使いやすくするための道具。サーバーレスのアプリを書くための決まった書き方、という意味の名前。テンプレートの書式（`template.yaml` の `Transform: AWS::Serverless-2016-10-31` がその印）と、`sam` コマンド（SAM CLI。CLI は Command Line Interface の略）の両方を指す。CloudFormation の設計図を短く書け、`sam` コマンドで建設会社に依頼する |
+| SAM（Serverless Application Model） | 建設会社への発注を代行する業者 | CloudFormation を Lambda 向けに使いやすくするための道具。名前は「サーバーレスのアプリを書くための決まった書き方」という意味。次の 2 つを指す。<br>・テンプレートの書式：設計図を短く書ける（`template.yaml` の `Transform: AWS::Serverless-2016-10-31` がその印）<br>・`sam` コマンド（SAM CLI。CLI は Command Line Interface の略）：建設会社への依頼を代行する |
 | SAM 用の S3 バケット | 資材置き場 | レシピ（コード）を建設会社に渡すために置いておく場所。`aws-sam-cli-managed-default` スタックとして作られる |
 
 ### CloudFormation とは
@@ -196,7 +196,7 @@ CloudFormation は AWS のサービスの 1 つで、Lambda や API Gateway と�
 
 このサンプルでは、テンプレート 1 つ（`template.yaml`）から、スタック 1 つ（`aws-lambda-minimal`）と、リソース 6 つが作られる。`template.yaml` に書いているのは `HelloFunction` と `HelloFunctionLogGroup` の 2 つで、残りの 4 つは SAM が追加する（手順書 7 章の変更点の一覧の表）。
 
-CloudFormation が受け取るのは、`template.yaml` そのものではない。`sam build` が作った `.aws-sam/build/template.yaml`（コードの場所などを書き換えたもの）を、`sam deploy` が S3 にアップロードして渡す。CloudFormation は `Transform` に従って SAM の書き方を広げてから、リソースを作る。中身のもとは `template.yaml` 。
+CloudFormation が受け取るのは、`template.yaml` そのものではない。`sam build` が作った `.aws-sam/build/template.yaml`（コードの場所などを書き換えたもの）を、`sam deploy` が S3 にアップロードして渡す。CloudFormation は `Transform` に従って SAM の書き方を広げてから、リソースを作る。中身のもとは `template.yaml`。
 
 #### このアカウントのスタック
 
@@ -225,7 +225,7 @@ CloudFormation のコンソールの「スタック」には、次の 2 つが�
 | `samconfig.toml` の `stack_name` | `stack_name = "aws-lambda-minimal"` |
 | `sam deploy --guided` の質問への答え | `Stack Name [sam-app]: aws-lambda-minimal` |
 
-このサンプルでは、`--guided` の答えが `samconfig.toml` に保存されているので、`samconfig.toml` で指定している形になっている。同じ `template.yaml` から、`--stack-name` で別の名前を渡すと、別のスタックが作られる。`aws-sam-cli-managed-default` は、SAM CLI が決めている固定の名前。`samconfig.toml` の `resolve_s3 = true` が、このスタックの S3 バケットを使う（なければ作る）設定。
+このサンプルでは、`samconfig.toml` に `stack_name` が書かれているので、`samconfig.toml` で指定している形になっている。同じ `template.yaml` から、`--stack-name` で別の名前を渡すと、別のスタックが作られる。`aws-sam-cli-managed-default` は、SAM CLI が決めている固定の名前。`samconfig.toml` の `resolve_s3 = true` が、このスタックの S3 バケットを使う（なければ作る）設定。
 
 ### SAM を使うと、必ず CloudFormation が使われる
 
@@ -262,11 +262,11 @@ SAM を使わずに CloudFormation だけを使う場合と比べると、次の
 | デプロイ | `sam deploy` | `aws cloudformation deploy --stack-name ...` |
 | 設定の保存 | `samconfig.toml` | 毎回コマンドに書く |
 
-お店でいうと、CloudFormation が建設会社で、SAM は建設会社への発注を代行する業者。設計図を短く書けるようにし、材料（コード）の運び込みも引き受ける。最後に建てるのは、どちらの場合も CloudFormation 。
+お店でいうと、CloudFormation が建設会社で、SAM は建設会社への発注を代行する業者。設計図を短く書けるようにし、材料（コード）の運び込みも引き受ける。最後に建てるのは、どちらの場合も CloudFormation。
 
 #### 対応する範囲
 
-SAM は AWS だけに対応している。リソースを実際に作る CloudFormation が、AWS のリソースを作るための AWS のサービスのため。SAM で Azure や Google Cloud のリソースは作れない。
+SAM は AWS だけに対応している。リソースを実際に作るのは CloudFormation で、CloudFormation は AWS のリソースだけを作る AWS のサービスのため。SAM で Azure や Google Cloud のリソースは作れない。
 
 AWS の中でも、SAM の短い書き方が使えるのは、Lambda、API Gateway などのサーバーレスのリソースだけ。ほかの AWS のリソース（データベースやネットワークなど）も、CloudFormation の書き方で同じテンプレートに書けば作れる。
 
@@ -289,7 +289,7 @@ CloudFormation（SAM）を使わずにリソースを作る方法として、コ
 | もう一度作る | 手順を覚えていないと、同じものを再現できない | 同じテンプレートから、何度でも同じものが作られる（手順書 10 章で消した後に、同じものを作り直せる） |
 | 変更する | どこを変えたかを自分で管理する | 変更前に、増える・変わる・消えるリソースの一覧（変更セット）が表示される |
 
-インフラ（サーバーや API などの仕組み）を、このようにファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。CloudFormation と SAM は、AWS の IaC の道具。`sam deploy` は、SAM の書式で短く書いたテンプレートを CloudFormation の書式に展開して、CloudFormation に渡す。リソースを実際に作るのは CloudFormation 。
+インフラ（サーバーや API などの仕組み）を、このようにファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。CloudFormation と SAM は、AWS の IaC の道具。`sam deploy` は、SAM の書式で短く書いたテンプレートを CloudFormation の書式に展開して、CloudFormation に渡す。リソースを実際に作るのは CloudFormation。
 
 ### 設計図の中の呼び名（HelloFunction など）
 
@@ -314,7 +314,7 @@ Resources:
 
 #### SAM が自動で付ける呼び名
 
-SAM が自動で追加するリソースには、上の名前に役割を表す単語をつなげた名前が付く。後ろの単語を見ると、何のためのリソースかが分かる。
+SAM が自動で追加するリソースには、`ServerlessHttpApi` を除いて、上の名前に役割を表す単語をつなげた名前が付く。後ろの単語を見ると、何のためのリソースかが分かる。
 
 | 呼び名 | 分解すると | 意味 |
 |---|---|---|
@@ -374,8 +374,8 @@ URL にリージョンを直接書かずに `${AWS::Region}` を使っている�
 |---|---|---|
 | `pytest` | 6 | 開店前に、レシピどおり作れるかを台所で試作する（AWS は使わない） |
 | `sam build` | 7 | レシピと設計図を、建設会社に渡せる形に箱詰めする（Mac の中だけで行う） |
-| `sam deploy --guided` | 7（A） | 箱を資材置き場に運び、建設会社に「この設計図で建てて」と依頼する。`--guided`（案内付き）を付けたので、店名や場所などを窓口で 1 つずつ聞かれる。答えは `samconfig.toml` に控えとして残る。初めてデプロイするときは、こちらを使う |
-| `sam deploy` | 7（B）、9 | 控え（`samconfig.toml`）の店名や場所を使って、建設会社に依頼する。控えがあるので、もう一度聞かれることはない。お店があれば改装になり、スタックの状態は `UPDATE_COMPLETE` になる。お店がなければ（`sam delete` の後など）新しく建てて、`CREATE_COMPLETE` になる。2 回目以降は、こちらを使う |
+| `sam deploy --guided` | 7（A） | 箱を資材置き場に運び、建設会社に「この設計図で建てて」と依頼する。`--guided`（案内付き）を付けたので、店名や場所などを窓口で 1 つずつ聞かれる。答えは `samconfig.toml` に控えとして残る。控えのリージョンが自分のプロジェクトと違うときや、設定を変えたいときは、こちらを使う |
+| `sam deploy` | 7（B）、9 | 控え（`samconfig.toml`）の店名や場所を使って、建設会社に依頼する。控えがあるので、もう一度聞かれることはない。お店があれば改装になり、スタックの状態は `UPDATE_COMPLETE` になる。お店がなければ（`sam delete` の後など）新しく建てて、`CREATE_COMPLETE` になる。控えの内容でよいときは、こちらを使う |
 | `curl` | 8 | 客として窓口に注文してみる |
 | `sam delete` | 10 | 建設会社に、お店を丸ごと撤去するよう依頼する。資材置き場は残る（手順書 10 章の手順で、手で片付けることもできる） |
 
@@ -385,10 +385,10 @@ URL にリージョンを直接書かずに `${AWS::Region}` を使っている�
 
 | | `sam deploy --guided` | `sam deploy` |
 |---|---|---|
-| お店でいうと | 窓口で担当者に聞かれながら、申込書（店名、場所、社員証を作ってよいか など）を書く | 前回の申込書の控えを見せて、「前と同じで」と依頼する |
+| お店でいうと | 窓口で担当者に聞かれながら、申込書（店名、場所、社員証を作ってよいか など）を書く | 申込書の控えを見せて、「この内容で」と依頼する |
 | 質問 | 出る | 出ない |
 | 使う設定 | その場で答えた内容。答えは控え（`samconfig.toml`）に保存される | 控え（`samconfig.toml`）の内容 |
-| 使う場面 | 初めてデプロイするとき、設定を変えたいとき、控えがないとき | 2 回目以降（スタックを `sam delete` で消した後も含む） |
+| 使う場面 | 控えのリージョンが自分のプロジェクトと違うとき、設定を変えたいとき、控えがないとき | 控えの内容でよいとき（初めてのデプロイ、2 回目以降、スタックを `sam delete` で消した後も含む） |
 
 控えがない状態で `--guided` を付けずに `sam deploy` を実行すると、店名などが決まっていないため、デプロイできずにエラーになる。
 
@@ -420,15 +420,15 @@ AWS Builder ID > プロジェクト > AWS アカウント > リージョン > �
 AWS Builder ID
 └─ プロジェクト「Just Ship It」
    └─ AWS アカウント
-      └─ リージョン ap-southeast-2
-         ├─ スタック aws-lambda-minimal
-         │    ├─ HelloFunction（Lambda の関数）
-         │    ├─ HelloFunctionLogGroup（ロググループ）
-         │    └─ ……ほか 4 つ
-         ├─ スタック aws-sam-cli-managed-default
-         │    ├─ S3 バケット
-         │    └─ バケットのアクセス設定
-         └─ （スタックに属さないリソース：AWS が最初から作った AccountFullAccessRole など）
+      ├─ リージョン ap-southeast-2
+      │  ├─ スタック aws-lambda-minimal
+      │  │    ├─ HelloFunction（Lambda の関数）
+      │  │    ├─ HelloFunctionLogGroup（ロググループ）
+      │  │    └─ ……ほか 4 つ
+      │  └─ スタック aws-sam-cli-managed-default
+      │       ├─ S3 バケット
+      │       └─ バケットのアクセス設定
+      └─ （リージョンにもスタックにも属さないリソース：AWS が最初から作った IAM ロール AccountFullAccessRole など）
 ```
 
 ### スタックが括弧付きの理由
@@ -439,9 +439,9 @@ SAM や CloudFormation で作ったリソースは、すべてどれかのスタ
 |---|---|
 | SAM や CloudFormation で作ったリソース | 合う |
 | コンソールで手で作ったリソース | 合わない。スタックを通らず、リージョンの直下にある |
-| AWS が最初から作ったもの（`AccountFullAccessRole` など） | 合わない。どのスタックにも属さない |
+| AWS が最初から作ったもの（`AccountFullAccessRole` など） | 合わない。どのスタックにも属さず、リージョンにも属さない（IAM ロールのため） |
 
-スタック自体も、リージョンに属するリソースの 1 つ（CloudFormation のリソース）。IAM ロールは例外で、リージョンに属さず、アカウント全体で 1 つのリソース。
+スタック自体も、リージョンに属するリソースの 1 つ（CloudFormation のリソース）。IAM ロールは例外で、リージョンに属さず、アカウント全体で 1 つのリソース。スタックで作った `HelloFunctionRole` も IAM ロールなので、スタックには属するが、リージョンには属さない。
 
 ### AWS アカウントは何の単位か
 

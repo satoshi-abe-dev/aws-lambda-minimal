@@ -15,7 +15,7 @@ import json
 # ハンドラ。リクエストが来るたびに Lambda から呼び出される。
 #   event:   リクエストの情報が入った辞書。GET /hello?name=test の場合、
 #            event["queryStringParameters"] は {"name": "test"} になる。
-#   context: 残りの実行時間など、Lambda 側の情報。この関数では使わない。
+#   context: 残りの実行時間など、Lambda 側の情報。この関数ではログに出すだけで、処理には使わない。
 # 戻り値の辞書は、API Gateway が HTTP のレスポンスに変換してクライアントに返す。
 def lambda_handler(event, context):
     # クエリ文字列（URL の ? より後ろ）を取り出す。

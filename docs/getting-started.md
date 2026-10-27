@@ -12,7 +12,7 @@ AWS への登録方法は 2 種類ある。この手順書は、2026 年 9 月�
 | | 新しい登録方式（この手順書） | 従来の登録方式（advanced） |
 |---|---|---|
 | ログイン | Google、GitHub、Apple、Amazon のアカウント、またはメールアドレス（AWS Builder ID） | ルートユーザー（メールアドレスとパスワード） |
-| リージョン | 連絡先の国によって自動で決まり、変えられない | 自由に選べる |
+| リージョン | 連絡先の国によって自動で決まる（「高度な機能をアクティブ化する」まで変えられない。2 章） | 自由に選べる |
 | 作業用ユーザー | 不要（AWS が管理者の権限を用意する） | IAM ユーザーや IAM Identity Center で作る |
 | 画面 | コンソールのホームに「プロジェクト管理」ボタンがあり、右上にリージョンの切り替えがない | 右上にリージョンの切り替えがある |
 
@@ -79,7 +79,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 | リージョン | AWS のデータセンターがある地域。新しい登録方式では、プロジェクトのリージョンが連絡先の国によって自動で決まる（米国東部（オハイオ）`us-east-2`、欧州（ストックホルム）`eu-north-1`、アジアパシフィック（シドニー）`ap-southeast-2` のどれか）。この手順書では例として `ap-southeast-2` を使う |
 | IAM（Identity and Access Management） | AWS の利用者と権限を管理するサービス。「誰が」「何をしてよいか」を決める。このサンプルでは、Lambda が動くための権限（IAM ロール）を SAM が自動で作る |
 | Lambda | 関数（プログラム）を置いておくと、呼ばれたときだけ実行するサービス。サーバーの管理が要らない（意味は [how-it-works.md](how-it-works.md) の 1 章にある）。実行した回数と時間に応じて課金される |
-| API Gateway（正式な名前は Amazon API Gateway） | AWS のサービスには「Amazon」か「AWS」で始まる正式な名前があり、普段は頭を省いて呼ぶ（AWS Lambda、AWS CloudFormation、Amazon CloudWatch など）。API Gateway も同じで、AWS のサービスの 1 つ。API は Application Programming Interface の略で、プログラムどうしがやり取りするための窓口。HTTP は Hypertext Transfer Protocol の略で、Web でデータをやり取りするときの決まり。インターネットからの HTTP リクエストを受け付けて、Lambda などに渡すサービス。このサンプルでは「HTTP API」という種類を使う |
+| API Gateway（正式な名前は Amazon API Gateway） | インターネットからの HTTP リクエストを受け付けて、Lambda などに渡すサービス。このサンプルでは「HTTP API」という種類を使う。API は Application Programming Interface の略で、プログラムどうしがやり取りするための窓口。HTTP は Hypertext Transfer Protocol の略で、Web でデータをやり取りするときの決まり。AWS のサービスには「Amazon」か「AWS」で始まる正式な名前があり、普段は頭を省いて呼ぶ（AWS Lambda、AWS CloudFormation、Amazon CloudWatch など）。API Gateway も同じ |
 | CloudWatch Logs | プログラムのログ（`print` の出力やエラー）を保存するサービス |
 | S3（正式な名前は Amazon S3。Simple Storage Service の略） | ファイルを保存するサービス。ファイルを入れる入れ物を「バケット（bucket）」と呼ぶ。このサンプルでは、`sam deploy` がコードの zip とテンプレートを置く場所として使う。「3」はバージョンや番号ではなく、**S**imple **S**torage **S**ervice の S が 3 つ並ぶことを表す（S1、S2 というサービスはない）。仮想サーバーの EC2（**E**lastic **C**ompute **C**loud、C が 2 つ）も同じ付け方 |
 | CloudFormation | 作りたいリソース（Lambda、API Gateway など）を設定ファイルに書くと、その通りにまとめて作るサービス。まとめて作ったものを「スタック」と呼び、スタックを削除すると中身もまとめて消える。このようにインフラをファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。手で作る場合との違いは [how-it-works.md](how-it-works.md) にある |
@@ -342,26 +342,26 @@ sam build
 
 ### デプロイ：A と B のどちらか 1 つを行う
 
-デプロイの方法は、このフォルダに `samconfig.toml` があるかどうかで決まる。次の **A と B のどちらか 1 つ** を行う。
+デプロイの方法は、`samconfig.toml` の内容をそのまま使えるかどうかで決まる。このリポジトリには `samconfig.toml` が入っていて、スタック名 `aws-lambda-minimal` とリージョン `ap-southeast-2` などが書かれている。次の **A と B のどちらか 1 つ** を行う。
 
-| `samconfig.toml` | 行う手順 | コマンド |
+| 状況 | 行う手順 | コマンド |
 |---|---|---|
-| ない（初めてデプロイする） | [A. 初回のデプロイ](#a-初回のデプロイsamconfigtoml-がない場合) | `sam deploy --guided` |
-| ある（前に A を行った） | [B. 2 回目以降のデプロイ](#b-2-回目以降のデプロイsamconfigtoml-がある場合) | `sam deploy` |
+| `region` が 2 章で確かめたプロジェクトのリージョンと違う、設定を変えたい、または `samconfig.toml` がない | [A. 設定を作ってデプロイする](#a-設定を作ってデプロイする) | `sam deploy --guided` |
+| `region` がプロジェクトのリージョンと同じで、ほかの設定もそのままでよい | [B. 保存済みの設定でデプロイする](#b-保存済みの設定でデプロイする) | `sam deploy` |
 
-`samconfig.toml` があるかどうかは、次のコマンドで確かめられる。ファイル名が表示されればファイルがあり、`No such file or directory` と表示されればファイルはない。
+`samconfig.toml` の `region` は、次のコマンドで確かめられる。`region = "ap-southeast-2"` のような行が表示される。
 
 ```bash
-ls samconfig.toml
+grep region samconfig.toml
 ```
 
-### A. 初回のデプロイ（`samconfig.toml` がない場合）
+### A. 設定を作ってデプロイする
 
 ```bash
 sam deploy --guided
 ```
 
-`--guided` は「案内付き」という意味のオプション。付けると、SAM がデプロイの設定を質問の形で 1 つずつ聞く。次の質問が出るのは、`--guided` を付けたため（詳しくは、この節の最後の「`--guided` と `samconfig.toml`」にある）。
+`--guided` は「案内付き」という意味のオプション。付けると、SAM がデプロイの設定を質問の形で 1 つずつ聞く。次の質問が出るのは、`--guided` を付けたため（`--guided` と `samconfig.toml` の関係は、質問の表の後にある）。
 
 | 質問 | 意味 | 回答 |
 |---|---|---|
@@ -379,7 +379,7 @@ SAM CLI の版によって、質問の文言が少し異なることがある。
 
 #### `--guided` と `samconfig.toml`
 
-`Save arguments to configuration file` に `Y` と答えると、回答がこのフォルダの `samconfig.toml` に保存される。中身は次のようになる（`#` 以降は説明として付けたもので、実際のファイルにはない）。
+`Save arguments to configuration file` に `Y` と答えると、回答がこのフォルダの `samconfig.toml` に保存される（すでにあるファイルは上書きされる）。中身は次のようになる（`#` 以降は説明として付けたもので、実際のファイルにはない）。
 
 ```toml
 [default.deploy.parameters]
@@ -391,12 +391,13 @@ resolve_s3 = true                     # SAM 用の S3 バケットを自動で�
 s3_prefix = "aws-lambda-minimal"      # バケットの中でファイルを置くフォルダの名前
 ```
 
-`sam deploy` は、`samconfig.toml` があると中身を読み込んで使う。このため、2 回目以降は `--guided` を付けずに `sam deploy` だけで、同じ設定でデプロイできる。スタックを `sam delete` で削除した後にもう一度デプロイする場合も同じ。
+`sam deploy` は、`samconfig.toml` があると中身を読み込んで使う。このため、`--guided` を付けずに `sam deploy` だけで、同じ設定でデプロイできる。リポジトリに入っている `samconfig.toml` も、A で保存したものも同じ。スタックを `sam delete` で削除した後にもう一度デプロイする場合も同じ。
 
-`--guided` をもう一度付けるのは、次の場合。
+`--guided` を付けるのは、次の場合。
 
-- スタック名やリージョンなど、設定を変えたいとき
-- `samconfig.toml` がないとき（削除した場合や、別の PC でリポジトリを取得した場合など）
+- `samconfig.toml` の `region` が、プロジェクトのリージョンと違うとき
+- スタック名など、ほかの設定を変えたいとき
+- `samconfig.toml` がないとき（削除した場合など）
 
 `--guided` を付けて実行した場合は、保存済みの回答が `[ ]` の中に表示される。Enter を押していくと、同じ設定のままになる。
 
@@ -457,15 +458,17 @@ Deploy this changeset? [y/N]:
 
 一覧で確かめる点は、意図しない `- Remove`（削除）や、`Replacement` が `True`（作り直し）の行がないか。問題がなければ `y`、やめる場合は `n` と答える。`n` と答えると、AWS には何も変更されない。
 
+手順 5 では、次のように API の URL が表示される。
+
 ```
 Key                 HelloApiUrl
 Description         URL of GET /hello
 Value               https://abcd1234.execute-api.ap-southeast-2.amazonaws.com/hello
 ```
 
-### B. 2 回目以降のデプロイ（`samconfig.toml` がある場合）
+### B. 保存済みの設定でデプロイする
 
-A を行ったときの回答が `samconfig.toml` に保存されているため、`--guided` を付けない。質問が出ないこと以外は、A の「デプロイの流れ」と同じ順に進む。
+`samconfig.toml` に保存済みの設定（リポジトリに入っているもの、または A で保存したもの）を使うため、`--guided` を付けない。質問が出ないこと以外は、A の「デプロイの流れ」と同じ順に進む。
 
 ```bash
 sam deploy
@@ -550,13 +553,15 @@ setopt interactivecomments
 
 Lambda の上で `print` した内容は、curl の返事には入らない。curl が受け取るのは、`lambda_handler` の戻り値の `"body"` だけ。`print` の出力は、Lambda が CloudWatch Logs に書く。
 
-`src/app.py` の `lambda_handler` の中（`name = ...` の行の後）には、`name` の値をログに出す次の行が入っている。curl で呼ぶたびに、この行が実行される。
+`src/app.py` の `lambda_handler` の中（`name = ...` の行の後）には、`event`、`context`、`name` の値をログに出す次の 3 行が入っている。curl で呼ぶたびに、この 3 行が実行される。
 
 ```python
+print(f"event:{{ {event} }}  @lambda_handler in app.py")
+print(f"context:{{ {context} }}  @lambda_handler in app.py")
 print(f"name:{{ {name} }}  @lambda_handler in app.py")
 ```
 
-f 文字列の中の `{{` と `}}` は、`{` と `}` そのものを表す。`?name=test` で呼ぶと、`name:{ test }  @lambda_handler in app.py` が出力される。
+f 文字列の中の `{{` と `}}` は、`{` と `}` そのものを表す。`?name=test` で呼ぶと、`name:{ test }  @lambda_handler in app.py` のほかに、`event:{ ... }` と `context:{ ... }` の行も出力される。`event` はリクエストの情報（URL、ヘッダーなど）が入った辞書で、1 行が長くなる。
 
 #### コンソールで見る手順
 
@@ -576,33 +581,43 @@ sam logs --stack-name aws-lambda-minimal -n HelloFunction --start-time '5min ago
 
 #### ログの読み方
 
-curl で `?name=test` を付けて 2 回、付けずに 2 回呼んだときのログの例（`RequestId` などは省略）。
+curl で `?name=test` を付けて 2 回、付けずに 2 回呼んだときのログの例（`RequestId` などは省略。`event:{ ... }` と `context:{ ... }` の中身も省略し、2 回目以降の `REPORT` は一部だけ示している）。
 
 ```text
 INIT_START Runtime Version: python:3.14...
 START RequestId: ...
+event:{ ... }  @lambda_handler in app.py
+context:{ ... }  @lambda_handler in app.py
 name:{ test }  @lambda_handler in app.py
 END RequestId: ...
 REPORT RequestId: ... Duration: 1.95 ms Billed Duration: 82 ms Memory Size: 128 MB Max Memory Used: 38 MB Init Duration: 79.74 ms
 START RequestId: ...
+event:{ ... }  @lambda_handler in app.py
+context:{ ... }  @lambda_handler in app.py
 name:{ test }  @lambda_handler in app.py
 END RequestId: ...
 REPORT RequestId: ... Duration: 1.53 ms Billed Duration: 2 ms Memory Size: 128 MB Max Memory Used: 38 MB
 START RequestId: ...
+event:{ ... }  @lambda_handler in app.py
+context:{ ... }  @lambda_handler in app.py
 name:{ World }  @lambda_handler in app.py
 END RequestId: ...
 REPORT RequestId: ...
 START RequestId: ...
+event:{ ... }  @lambda_handler in app.py
+context:{ ... }  @lambda_handler in app.py
 name:{ World }  @lambda_handler in app.py
 END RequestId: ...
 REPORT RequestId: ...
 ```
 
-1 回の呼び出しで、次の 4 行が出る。
+1 回の呼び出しで、次の 6 行が出る。
 
 | 行 | 意味 |
 |---|---|
 | `START` | `lambda_handler` の実行が始まった |
+| `event:{ ... }` | `print` の出力。リクエストの情報が入った辞書 |
+| `context:{ ... }` | `print` の出力。Lambda 側の情報 |
 | `name:{ ... }` | `print` の出力。`?name=` を付けない場合は `World` になる |
 | `END` | `lambda_handler` の実行が終わった |
 | `REPORT` | 実行時間（`Duration`）、料金の計算に使う時間（`Billed Duration`）、使ったメモリ（`Max Memory Used`） |
@@ -625,7 +640,7 @@ sam build
 sam deploy
 ```
 
-2 回目以降は `--guided` を付けない。初回の回答は `samconfig.toml` に保存されていて、`sam deploy` はそれを使う。変更点の一覧が表示されたら `y` と答える。同じ URL を curl で呼ぶと、新しい挨拶が返る。
+`--guided` は付けない。設定は `samconfig.toml` に保存されていて、`sam deploy` はそれを使う。変更点の一覧が表示されたら `y` と答える。同じ URL を curl で呼ぶと、新しい挨拶が返る。
 
 ### ビルドとデプロイが必要な場合
 
@@ -761,7 +776,7 @@ SAM CLI 1.167.0 のソースで、このスタックのテンプレートを確�
 
 S3 の画面で、バケットを「空にする」の後に「削除」まで行った場合も、その後に CloudFormation でスタックを削除すると、失敗せずに終わった（2026-10-20 に実機で確認）。CloudFormation は、すでにないバケットを消えたものとして扱う。ただし、バケットだけを消してスタックを残すと、次の `sam deploy` が、もうないバケットにファイルを置こうとして失敗する。バケットを S3 の画面で削除した場合も、スタックを削除するところまで行う。
 
-「スタック (0)」になれば、SAM 用の置き場も含めて、このサンプルで AWS に作ったものはすべて消えている。次に `sam deploy --guided` を実行すると、SAM 用のバケットとスタックは自動で作り直される。
+「スタック (0)」になれば、SAM 用の置き場も含めて、このサンプルで AWS に作ったものはすべて消えている。次に `sam deploy`（または `sam deploy --guided`）を実行すると、SAM 用のバケットとスタックは自動で作り直される。
 
 ### プロジェクトとアカウント
 
@@ -820,7 +835,7 @@ SAM のコマンドに `--profile sam` を付けて実行する。
 sam deploy --guided --profile sam
 ```
 
-`--guided` のときに指定したプロファイルは `samconfig.toml` に保存され、以降の `sam deploy` でも使われる。
+`--guided` のときに指定したプロファイルは `samconfig.toml` に保存され、以降の `sam deploy` でも使われる。この行は個人用の設定で、`samconfig.toml` は git で管理されているため、コミットには含めない。
 
 ### コンソールでリソースが見つからない
 
