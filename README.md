@@ -10,7 +10,7 @@ AWS Lambda と Amazon API Gateway（HTTP API）で作る、最小構成の Web A
 ```
 
 AWS アカウントの作成から後片付けまでの詳しい手順は、[docs/getting-started.md](docs/getting-started.md) にある。手順書の冒頭の「全体の流れ」に、各章で何をするか、何のためかを表でまとめている。
-使う AWS のサービスとコマンドの役割は、お店にたとえた説明が [docs/how-it-works.md](docs/how-it-works.md) にある。
+用語の意味と、使う AWS のサービスやコマンドの役割は、勉強用の資料 [docs/how-it-works.md](docs/how-it-works.md) にある（お店にたとえて説明している）。手順書には手順だけを書いている。
 
 ## 構成
 
@@ -36,8 +36,8 @@ flowchart LR
 ├── tests/
 │   └── test_app.py         # pytest による単体テスト（AWS に接続しない）
 ├── docs/
-│   ├── getting-started.md  # 初心者向けの手順書
-│   ├── how-it-works.md     # 仕組みの説明（お店にたとえた説明）
+│   ├── getting-started.md  # 手順書（手順だけ）
+│   ├── how-it-works.md     # 勉強用の資料（用語集と仕組みの説明）
 │   └── terraform.md        # Terraform のメモ（SAM との違い）
 ├── template.yaml           # SAM テンプレート
 ├── requirements-dev.txt    # 開発用の依存（pytest）
