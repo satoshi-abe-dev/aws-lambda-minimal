@@ -30,7 +30,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 
 | 章 | やること | 何のためか |
 |---|---|---|
-| 1 | 用語を知る | 以降の説明に出てくる言葉を先に押さえる |
+| 1 | 用語集の場所を知る | 手順書に出てくる言葉の意味を、いつでも調べられるようにする |
 | 2 | AWS アカウントを作る | AWS を使うための契約。Free プランで始める |
 | 3 | MFA を設定する | パスワードが漏れても、他人がログインできないようにする |
 | 4 | 費用の確認方法を知る | 残りのクレジットと期限を、いつでも確かめられるようにする |
@@ -42,7 +42,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 | 10 | 後片付けをする | 作ったものを AWS から消し、誰でも呼び出せる API を残さない |
 | 11 | エラーの対処を調べる | うまくいかないときに参照する |
 
-使う AWS のサービスとコマンドが何をしているかは、お店にたとえた説明が [how-it-works.md](how-it-works.md) にある。
+用語、使う AWS のサービス、コマンドが何をしているかは、勉強用の資料 [how-it-works.md](how-it-works.md) にある。この手順書は手順だけを書く。
 
 1〜5 章は最初の 1 回だけの準備。6〜9 章は、コードを変えるたびに繰り返す流れ。10 章は、使い終わったときに行う。
 
@@ -54,7 +54,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 
 ## 目次
 
-1. [AWS の基本用語](#1-aws-の基本用語)
+1. [用語について](#1-用語について)
 2. [AWS アカウントの作成](#2-aws-アカウントの作成)
 3. [MFA（Multi-Factor Authentication、多要素認証）の設定](#3-mfamulti-factor-authentication多要素認証の設定)
 4. [費用の確認](#4-費用の確認)
@@ -68,27 +68,9 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 
 ---
 
-## 1. AWS の基本用語
+## 1. 用語について
 
-| 用語 | 説明 |
-|---|---|
-| AWS（Amazon Web Services） | Amazon のクラウドサービスの総称。Lambda、API Gateway などのサービスの集まり |
-| プロジェクト | 新しい登録方式で、作ったリソースをまとめておく単位。1 つのプロジェクトに 1 つの AWS アカウントが入っている。登録すると最初のプロジェクトが自動で作られる。1 つの AWS Builder ID で、プロジェクトを複数作れる。従来の登録方式にはプロジェクトという単位はなく、登録すると AWS アカウントが 1 つ作られ、リソースはそこに直接置く |
-| AWS Settings | プロジェクトの管理、MFA、支払い方法などを設定する画面（<https://settings.aws.com>）。コンソールのホームの「プロジェクト管理」からも開ける |
-| AWS Builder ID | ID は Identifier（識別子）の略。新しい登録方式で AWS にログインするための個人のアカウント。登録時に作られる |
-| リージョン | AWS のデータセンターがある地域。新しい登録方式では、プロジェクトのリージョンが連絡先の国によって自動で決まる（米国東部（オハイオ）`us-east-2`、欧州（ストックホルム）`eu-north-1`、アジアパシフィック（シドニー）`ap-southeast-2` のどれか）。この手順書では例として `ap-southeast-2` を使う |
-| IAM（Identity and Access Management） | AWS の利用者と権限を管理するサービス。「誰が」「何をしてよいか」を決める。このサンプルでは、Lambda が動くための権限（IAM ロール）を SAM が自動で作る |
-| Lambda | 関数（プログラム）を置いておくと、呼ばれたときだけ実行するサービス。サーバーの管理が要らない（意味は [how-it-works.md](how-it-works.md) の 1 章にある）。実行した回数と時間に応じて課金される |
-| API Gateway（正式な名前は Amazon API Gateway） | インターネットからの HTTP リクエストを受け付けて、Lambda などに渡すサービス。このサンプルでは「HTTP API」という種類を使う。API は Application Programming Interface の略で、プログラムどうしがやり取りするための窓口。HTTP は Hypertext Transfer Protocol の略で、Web でデータをやり取りするときの決まり。AWS のサービスには「Amazon」か「AWS」で始まる正式な名前があり、普段は頭を省いて呼ぶ（AWS Lambda、AWS CloudFormation、Amazon CloudWatch など）。API Gateway も同じ |
-| CloudWatch Logs | プログラムのログ（`print` の出力やエラー）を保存するサービス |
-| S3（正式な名前は Amazon S3。Simple Storage Service の略） | ファイルを保存するサービス。ファイルを入れる入れ物を「バケット（bucket）」と呼ぶ。このサンプルでは、`sam deploy` がコードの zip とテンプレートを置く場所として使う。「3」はバージョンや番号ではなく、**S**imple **S**torage **S**ervice の S が 3 つ並ぶことを表す（S1、S2 というサービスはない）。仮想サーバーの EC2（**E**lastic **C**ompute **C**loud、C が 2 つ）も同じ付け方 |
-| CloudFormation | 作りたいリソース（Lambda、API Gateway など）を設定ファイルに書くと、その通りにまとめて作るサービス。まとめて作ったものを「スタック」と呼び、スタックを削除すると中身もまとめて消える。このようにインフラをファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。手で作る場合との違いは [how-it-works.md](how-it-works.md) にある |
-| スタック | CloudFormation が 1 つのテンプレートからリソースを作り、集合としてまとめたもの。このサンプルでは `template.yaml` から `aws-lambda-minimal` というスタックが作られる。リソースとの違いは [how-it-works.md](how-it-works.md) の 4 章にある |
-| リソース | AWS の上に作った個々のもの（Lambda の関数、ロググループ、HTTP API など） |
-| デプロイ | プログラムと、それが動くための仕組み一式（Lambda、API Gateway など）を AWS 上に用意し、インターネットから呼び出せる状態にすること。このサンプルでは `sam deploy` で行う。ビルドしたものを S3 に置き、CloudFormation が `template.yaml` どおりにリソースを作る（または更新する）。できた API の URL は公開され、URL を知っていれば誰でも、どの端末からでも呼び出せる |
-| SAM（Serverless Application Model） | CloudFormation を Lambda 向けに使いやすくするための道具。AWS が開発しているオープンソース。CloudFormation の書き方を短くした書式（このリポジトリの `template.yaml`）と、ビルドからデプロイ、削除までをまとめて行うコマンド（`sam`）の 2 つからなる。リソースを実際に作るのは CloudFormation |
-
-プロジェクト、AWS アカウント、リージョン、スタック、リソースの入れ子の関係は、[how-it-works.md](how-it-works.md) の 7 章にある。
+AWS の用語（プロジェクト、リージョン、IAM、Lambda、API Gateway、S3、CloudFormation、スタック、SAM など）の意味は、[how-it-works.md](how-it-works.md) の 8 章（用語集）にある。この手順書には手順を書き、言葉の意味と仕組みは how-it-works.md にまとめている。
 
 ## 2. AWS アカウントの作成
 
@@ -379,25 +361,7 @@ SAM CLI の版によって、質問の文言が少し異なることがある。
 
 #### `--guided` と `samconfig.toml`
 
-`Save arguments to configuration file` に `Y` と答えると、回答がこのフォルダの `samconfig.toml` に保存される（すでにあるファイルは上書きされる）。中身は次のようになる（`#` 以降は説明として付けたもので、実際のファイルにはない）。
-
-```toml
-[default.deploy.parameters]
-stack_name = "aws-lambda-minimal"     # スタック名
-region = "ap-southeast-2"             # リージョン
-confirm_changeset = true              # デプロイ前に変更点の一覧を表示して確認する
-capabilities = "CAPABILITY_IAM"       # IAM ロールを作ってよい
-resolve_s3 = true                     # SAM 用の S3 バケットを自動で使う
-s3_prefix = "aws-lambda-minimal"      # バケットの中でファイルを置くフォルダの名前
-```
-
-`sam deploy` は、`samconfig.toml` があると中身を読み込んで使う。このため、`--guided` を付けずに `sam deploy` だけで、同じ設定でデプロイできる。リポジトリに入っている `samconfig.toml` も、A で保存したものも同じ。スタックを `sam delete` で削除した後にもう一度デプロイする場合も同じ。
-
-`--guided` を付けるのは、次の場合。
-
-- `samconfig.toml` の `region` が、プロジェクトのリージョンと違うとき
-- スタック名など、ほかの設定を変えたいとき
-- `samconfig.toml` がないとき（削除した場合など）
+`Save arguments to configuration file` に `Y` と答えると、回答がこのフォルダの `samconfig.toml` に保存される（すでにあるファイルは上書きされる）。保存された設定は、`--guided` を付けない `sam deploy`（B）で使われる。`samconfig.toml` の中身の意味は、[how-it-works.md](how-it-works.md) の 5 章「`samconfig.toml` の中身」にある。
 
 `--guided` を付けて実行した場合は、保存済みの回答が `[ ]` の中に表示される。Enter を押していくと、同じ設定のままになる。
 
@@ -419,42 +383,7 @@ s3_prefix = "aws-lambda-minimal"      # バケットの中でファイルを置�
 4. CloudFormation がリソースを作る。進み具合が表示される。
 5. 完了すると `Outputs` に API の URL が表示される。
 
-手順 3 では、次のような一覧が表示される（スタックがない状態でデプロイした例）。
-
-```
-CloudFormation stack changeset
----------------------------------------------------------------------------------------------------
-Operation       LogicalResourceId                          ResourceType               Replacement
----------------------------------------------------------------------------------------------------
-+ Add           HelloFunctionHelloApiPermission            AWS::Lambda::Permission    N/A
-+ Add           HelloFunctionLogGroup                      AWS::Logs::LogGroup        N/A
-+ Add           HelloFunctionRole                          AWS::IAM::Role             N/A
-+ Add           HelloFunction                              AWS::Lambda::Function      N/A
-+ Add           ServerlessHttpApiApiGatewayDefaultStage    AWS::ApiGatewayV2::Stage   N/A
-+ Add           ServerlessHttpApi                          AWS::ApiGatewayV2::Api     N/A
----------------------------------------------------------------------------------------------------
-Deploy this changeset? [y/N]:
-```
-
-列の意味は次のとおり。
-
-| 列 | 意味 |
-|---|---|
-| Operation | そのリソースに対して行う操作。`+ Add` は新しく作る、`* Modify` は変更する、`- Remove` は削除する |
-| LogicalResourceId | `template.yaml` の中での呼び名 |
-| ResourceType | リソースの種類 |
-| Replacement | `* Modify` のとき、作り直しになるか（`True`）、そのまま変更できるか（`False`）。`+ Add` では `N/A` |
-
-各行のリソースは次のとおり。`template.yaml` に書いているのは `HelloFunction` と `HelloFunctionLogGroup` の 2 つで、残りの 4 つは SAM が自動で追加する。
-
-| LogicalResourceId | 種類 | 役割 | `template.yaml` に書いているか |
-|---|---|---|---|
-| `HelloFunction` | Lambda の関数 | `src/app.py` を実行する | 書いている |
-| `HelloFunctionLogGroup` | CloudWatch Logs のロググループ | Lambda のログを 7 日間保存する | 書いている |
-| `HelloFunctionRole` | IAM ロール | Lambda がログを書き込むための権限 | SAM が追加 |
-| `ServerlessHttpApi` | API Gateway の HTTP API | インターネットからのリクエストを受け付ける | SAM が追加（`Events` の `HttpApi` から） |
-| `ServerlessHttpApiApiGatewayDefaultStage` | API Gateway のステージ | API を公開して呼び出せる状態にするための設定 | SAM が追加 |
-| `HelloFunctionHelloApiPermission` | Lambda の呼び出し許可 | API Gateway が Lambda を呼び出してよいという許可 | SAM が追加 |
+手順 3 では、作るリソースの一覧（スタックがない状態では、6 つのリソースがすべて `+ Add`（新しく作る）の行）が表示される。列の意味と、各行のリソースの役割は、[how-it-works.md](how-it-works.md) の 5 章「変更セットの読み方」にある。
 
 一覧で確かめる点は、意図しない `- Remove`（削除）や、`Replacement` が `True`（作り直し）の行がないか。問題がなければ `y`、やめる場合は `n` と答える。`n` と答えると、AWS には何も変更されない。
 
@@ -527,10 +456,7 @@ setopt interactivecomments
 
 #### コマンドの意味
 
-- **`curl`**: URL に HTTP のリクエストを送り、返ってきた返事をターミナルに表示するコマンド。ブラウザで URL を開くのと同じことを、文字だけで行う。
-- **`$URL`**: 直前の `URL=$(...)` で値を入れた変数。シェルが `$URL` を中身に置き換えてから curl を実行する。そのため、`curl "$URL?name=test"` は `curl "https://<ID>.execute-api.ap-southeast-2.amazonaws.com/hello?name=test"` と同じになる。
-- **`?name=test`**: クエリ文字列。URL の `?` より後ろに `名前=値` の形で書き、サーバーに値を渡す。ここでは `lambda_handler` に `name` を渡している。
-- **`"`（ダブルクォート）**: zsh では `?` がファイル名の検索に使われる特別な文字で、囲まないと `no matches found` というエラーになることがある。`"` で囲むと、URL がそのまま curl に渡る。
+`curl`、`$URL`、`?name=test`、`"` の意味は、[how-it-works.md](how-it-works.md) の 5 章「`curl` コマンドの意味」にある。
 
 | コマンド | 送る内容 | 返事 |
 |---|---|---|
@@ -581,48 +507,7 @@ sam logs --stack-name aws-lambda-minimal -n HelloFunction --start-time '5min ago
 
 #### ログの読み方
 
-curl で `?name=test` を付けて 2 回、付けずに 2 回呼んだときのログの例（`RequestId` などは省略。`event:{ ... }` と `context:{ ... }` の中身も省略し、2 回目以降の `REPORT` は一部だけ示している）。
-
-```text
-INIT_START Runtime Version: python:3.14...
-START RequestId: ...
-event:{ ... }  @lambda_handler in app.py
-context:{ ... }  @lambda_handler in app.py
-name:{ test }  @lambda_handler in app.py
-END RequestId: ...
-REPORT RequestId: ... Duration: 1.95 ms Billed Duration: 82 ms Memory Size: 128 MB Max Memory Used: 38 MB Init Duration: 79.74 ms
-START RequestId: ...
-event:{ ... }  @lambda_handler in app.py
-context:{ ... }  @lambda_handler in app.py
-name:{ test }  @lambda_handler in app.py
-END RequestId: ...
-REPORT RequestId: ... Duration: 1.53 ms Billed Duration: 2 ms Memory Size: 128 MB Max Memory Used: 38 MB
-START RequestId: ...
-event:{ ... }  @lambda_handler in app.py
-context:{ ... }  @lambda_handler in app.py
-name:{ World }  @lambda_handler in app.py
-END RequestId: ...
-REPORT RequestId: ...
-START RequestId: ...
-event:{ ... }  @lambda_handler in app.py
-context:{ ... }  @lambda_handler in app.py
-name:{ World }  @lambda_handler in app.py
-END RequestId: ...
-REPORT RequestId: ...
-```
-
-1 回の呼び出しで、次の 6 行が出る。
-
-| 行 | 意味 |
-|---|---|
-| `START` | `lambda_handler` の実行が始まった |
-| `event:{ ... }` | `print` の出力。リクエストの情報が入った辞書 |
-| `context:{ ... }` | `print` の出力。Lambda 側の情報 |
-| `name:{ ... }` | `print` の出力。`?name=` を付けない場合は `World` になる |
-| `END` | `lambda_handler` の実行が終わった |
-| `REPORT` | 実行時間（`Duration`）、料金の計算に使う時間（`Billed Duration`）、使ったメモリ（`Max Memory Used`） |
-
-一番上の `INIT_START` は、Lambda が起動したとき（コールドスタート）に 1 回だけ出る行。最初の `REPORT` にだけ、起動にかかった時間 `Init Duration` が付く。2 回目以降は起動済みの Lambda が使い回されるため、`INIT_START` の行は出ない。しばらく呼ばれずに Lambda が片付けられると、次の呼び出しで新しいログストリームが作られ、`INIT_START` から始まる。起動と呼び出しの違いは、[仕組みの説明](how-it-works.md)の 3 章「起動したときと、注文が来たとき」にある。
+ログの各行（`START`、`END`、`REPORT`、`INIT_START` など）の意味は、[how-it-works.md](how-it-works.md) の 3 章「ログの読み方」にある。
 
 ## 9. コードを変更して再デプロイする
 
@@ -644,19 +529,7 @@ sam deploy
 
 ### ビルドとデプロイが必要な場合
 
-`src/app.py` を変えても、AWS 上の Lambda 関数のコードは変わらない。AWS に反映するには、`sam build` と `sam deploy` の両方が必要。
-
-| コマンド | 必要な理由 |
-|---|---|
-| `sam build` | `sam deploy` がアップロードするのは `src/app.py` ではなく、`sam build` が `.aws-sam/build/` に作ったコピー。`sam build` を実行しないと、コピーは古いコードのまま |
-| `sam deploy` | 新しいコピーを AWS にアップロードし、Lambda 関数のコードを置き換える。URL は変わらない |
-
-次の場合は、ビルドとデプロイがなくても困らない。
-
-| 場合 | 理由 |
-|---|---|
-| `pytest` で Mac の中でテストする | テストは `src/app.py` を直接呼び出す |
-| コメントだけを変えた | AWS 上の動きは変わらない。AWS 上のコピーのコメントが古いまま残るだけ |
+`src/app.py` を変えても、AWS 上の Lambda 関数のコードは変わらない。AWS に反映するには、`sam build` と `sam deploy` の両方が必要。理由と、不要な場合は、[how-it-works.md](how-it-works.md) の 5 章「ビルドとデプロイが必要な場合」にある。
 
 ## 10. 後片付け
 
@@ -702,54 +575,9 @@ curl で URL を呼ぶと、接続できないエラーになる。
 
 ### SAM 用の S3 バケットについて
 
-`sam delete` は、7 章で自動で作られた `aws-sam-cli-managed-default` スタックとその S3 バケットを削除しない。このバケットを、同じリージョンにあるほかの SAM アプリもデプロイのときに使うため。
+`sam delete` は、7 章で自動で作られた `aws-sam-cli-managed-default` スタックとその S3 バケットを削除しない。このバケットを、同じリージョンにあるほかの SAM アプリもデプロイのときに使うため（理由と費用は [how-it-works.md](how-it-works.md) の 9 章）。
 
-#### バケットとは
-
-バケット（bucket）は、S3 で、ファイルを入れる一番外側の入れ物を指す。
-
-| 用語 | 意味 | パソコンでたとえると |
-|---|---|---|
-| バケット（bucket） | ファイルを入れる、一番外側の入れ物 | ドライブ（外付けの HDD など 1 台） |
-| フォルダ（プレフィックス） | バケットの中の区切り | フォルダ |
-| オブジェクト | 中に入っている 1 つ 1 つのファイル | ファイル |
-
-- バケットの名前は、世界中のすべての AWS の利用者の間で重なってはいけない。SAM のバケットの名前が `aws-sam-cli-managed-default-samclisourcebucket-` の後ろにランダムな文字列が付いた長い名前なのは、このため。
-- バケットごとに、どのリージョンに置くか、誰が読めるかなどを設定する。
-- S3 の「フォルダ」は、正式には「プレフィックス」と呼ぶ。ファイル名の頭に付いた `aws-lambda-minimal/` を、画面上でフォルダのように見せているもの。`samconfig.toml` の `s3_prefix` の prefix は、このことを指す。
-
-#### バケットが残る理由
-
-SAM 用の S3 バケットは、SAM アプリごとではなく、1 つのリージョンに 1 つだけ作られる。そのリージョンでデプロイする SAM アプリは、すべて同じバケットに、アプリごとにフォルダを分けてファイルを置く。たとえば、このサンプルのほかにアプリ B も同じリージョンにデプロイした場合は、次のようになる。
-
-```text
-S3 バケット（aws-sam-cli-managed-default のもの）
-├─ aws-lambda-minimal/   ← このサンプルのファイル
-└─ app-b/                ← アプリ B のファイル
-```
-
-このサンプルの `sam delete` で消してよいのは、このサンプルのものだけ。
-
-| 消すもの | 消してよいか |
-|---|---|
-| スタック `aws-lambda-minimal` | よい（このサンプルだけのもの） |
-| フォルダ `aws-lambda-minimal/`（2 つ目の質問） | よい（このサンプルだけのもの） |
-| バケットそのもの | よくない。アプリ B のファイルも一緒に消える |
-
-そのため、`sam delete` はバケットを消さない。バケットはスタック `aws-sam-cli-managed-default` の中のリソースなので、このスタックも消さない。ほかに SAM アプリがなければ、次の手順で消しても困ることはない。消さずに残した場合、次の `sam deploy` でそのまま使われる。消した場合は、次の `sam deploy` で SAM がもう一度作る。
-
-#### 残した場合の費用
-
-スタックとバケットは、あるだけでは費用がかからない。費用がかかるのは、バケットの中のファイル。
-
-| もの | あるだけで費用がかかるか |
-|---|---|
-| スタック `aws-sam-cli-managed-default` | かからない（CloudFormation は、スタックを持っているだけでは料金がかからない） |
-| S3 バケット（入れ物そのもの） | かからない |
-| バケットの中のファイル | 保存している量に応じてかかる |
-| バケットのアクセス設定（ポリシー） | かからない |
-
-`sam delete` の 2 つ目の質問に `y` と答えると、このサンプルのファイルは消える。ただし、このバケットはバージョニングが有効なので、消したファイルの古いバージョンが残り、保存料金の対象になることがある。このサンプルの量では数 KB から数 MB で、料金はほぼゼロ。Free プランでは請求は発生せず、かかった分はクレジットから引かれる。
+残した場合は、次の `sam deploy` でそのまま使われる。バケットとスタックはあるだけでは費用がかからず、このサンプルのファイルの量では保存料金もほぼゼロ。Free プランでは請求は発生しない。
 
 費用がかかるものを何も残さない場合は、次の手順でバケットとスタックを消す。
 
@@ -757,24 +585,12 @@ S3 バケット（aws-sam-cli-managed-default のもの）
 
 完全に消す場合は次の順に行う。
 
-1. S3 のコンソールで `aws-sam-cli-managed-default-samclisourcebucket-...` を選び、「空にする」を実行する（このバケットはバージョニングが有効なので、「空にする」で古いバージョンも含めて消える）。
+1. S3 のコンソールで `aws-sam-cli-managed-default-samclisourcebucket-...` を選び、「空にする」を実行する（古いバージョンも含めて消える）。
 2. CloudFormation のコンソールで `aws-sam-cli-managed-default` スタックを選び、「削除」を実行する。
 
-スタックを削除すると、中の S3 バケットも削除される。ただし、バケットが空であることが条件。
+バケットが空でないと、スタックの削除は `DELETE_FAILED` で失敗する。手順の 1 で先に「空にする」を実行するのは、このため（[how-it-works.md](how-it-works.md) の 9 章）。
 
-| バケットの状態 | スタックを削除すると |
-|---|---|
-| 空（古いバージョンも含めて何もない） | バケットも一緒に消える |
-| 中にファイルが残っている | バケットを消せず、スタックの削除が失敗する（`DELETE_FAILED`） |
-
-AWS は、中身が入った S3 バケットの削除を受け付けない。CloudFormation もこの決まりに従うので、中身を消してからバケットを削除するようなことはしない。手順の 1 で先に「空にする」を実行するのは、このため。
-
-SAM CLI 1.167.0 のソースで、このスタックのテンプレートを確かめた結果は次のとおり。
-
-- バケットに、スタックを消しても残す設定（`DeletionPolicy: Retain`）は付いていない。そのため、空であればスタックと一緒に消える。
-- バージョニングが有効（`VersioningConfiguration: Enabled`）になっている。そのため、画面で空に見えても、消したファイルの古いバージョンが残っていると空にならない。
-
-S3 の画面で、バケットを「空にする」の後に「削除」まで行った場合も、その後に CloudFormation でスタックを削除すると、失敗せずに終わった（2026-10-20 に実機で確認）。CloudFormation は、すでにないバケットを消えたものとして扱う。ただし、バケットだけを消してスタックを残すと、次の `sam deploy` が、もうないバケットにファイルを置こうとして失敗する。バケットを S3 の画面で削除した場合も、スタックを削除するところまで行う。
+S3 の画面でバケットを「削除」まで行った場合も、スタックを削除するところまで行う。バケットだけを消してスタックを残すと、次の `sam deploy` が失敗する。
 
 「スタック (0)」になれば、SAM 用の置き場も含めて、このサンプルで AWS に作ったものはすべて消えている。次に `sam deploy`（または `sam deploy --guided`）を実行すると、SAM 用のバケットとスタックは自動で作り直される。
 
