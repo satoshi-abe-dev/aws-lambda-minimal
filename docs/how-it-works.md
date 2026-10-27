@@ -32,7 +32,7 @@ Azure（Microsoft のクラウド全体の名前）も同じ作りで、中に�
 
 プログラムを動かすには、それを実行するコンピュータ（サーバー）が要る。Lambda は AWS が提供するサービスの 1 つで、サーバーの用意と世話は Lambda が行う。Lambda 上で動かすために利用者が用意するのは、コード（`src/app.py`）と設定（`template.yaml`）の 2 つ。リポジトリにはほかに、`samconfig.toml`（`sam deploy` の設定の保存）と `requirements-dev.txt`（手元のテストに使う pytest の一覧）があるが、どちらも手元での作業のためのファイルで、Lambda 上では使われない。
 
-Lambda と同じく AWS のサービスである EC2（Elastic Compute Cloud、仮想サーバーを借りるサービス）で、同じことをする場合を並べて比べる。
+同じプログラムを動かす方法として、EC2（Elastic Compute Cloud、仮想サーバーを借りるサービス）を自分で設定して使う場合と、Lambda を使う場合を並べて比べる。表の各行は作業の内容で、EC2 の列は自分で行う作業、Lambda の列はその作業を Lambda が行うことを表す。
 
 | 作業 | EC2（サーバーを借りる） | Lambda |
 |---|---|---|
