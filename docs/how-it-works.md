@@ -12,11 +12,27 @@
 | CloudWatch Logs | 業務日誌 | 料理人がいつ何をしたかの記録。`template.yaml` で 7 日たつと消える設定にしている |
 | IAM ロール | 社員証 | 料理人が日誌に書き込むための許可証。SAM が自動で作る |
 
+### AWS とサービスの関係
+
+AWS は、Amazon のクラウドサービス全体の名前。その中に、用途ごとのサービスが並んでいる。Lambda も、API Gateway も、次に出てくる EC2 も、AWS の中のサービスの 1 つ。AWS 自体が EC2 というわけではない。
+
+```
+AWS（クラウド全体）
+├─ EC2             仮想サーバーを借りる
+├─ Lambda          関数を置くと、呼ばれたときだけ実行する
+├─ S3              ファイルを保存する
+├─ API Gateway     HTTP リクエストを受け付ける
+├─ CloudFormation  リソースをまとめて作る
+└─ ……ほか多数
+```
+
+Azure（Microsoft のクラウド全体の名前）も同じ作りで、中にサービスがある。EC2 に当たるサービスは Azure Virtual Machines、Lambda に当たるサービスは Azure Functions。
+
 ### 「サーバーの管理が要らない」の意味
 
 プログラムを動かすには、それを実行するコンピュータ（サーバー）が要る。Lambda は AWS が提供するサービスの 1 つで、サーバーの用意と世話は Lambda が行う。Lambda 上で動かすために利用者が用意するのは、コード（`src/app.py`）と設定（`template.yaml`）の 2 つ。リポジトリにはほかに、`samconfig.toml`（`sam deploy` の設定の保存）と `requirements-dev.txt`（手元のテストに使う pytest の一覧）があるが、どちらも手元での作業のためのファイルで、Lambda 上では使われない。
 
-比べる相手として、AWS の EC2（Elastic Compute Cloud、仮想サーバーを借りるサービス）で同じことをする場合を並べる。
+Lambda と同じく AWS のサービスである EC2（Elastic Compute Cloud、仮想サーバーを借りるサービス）で、同じことをする場合を並べて比べる。
 
 | 作業 | EC2（サーバーを借りる） | Lambda |
 |---|---|---|
