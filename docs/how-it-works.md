@@ -30,6 +30,16 @@ AWS（クラウド全体）
 └─ ……ほか多数
 ```
 
+名前が略語のサービスは、次のとおり。
+
+| 名前 | 正式な名前 | 略語の読み方 |
+|---|---|---|
+| EC2 | Amazon Elastic Compute Cloud | **E**lastic **C**ompute **C**loud の頭文字 E と C が 2 つ並ぶ |
+| ECS | Amazon Elastic Container Service | **E**lastic **C**ontainer **S**ervice の頭文字 |
+| S3 | Amazon Simple Storage Service | **S**imple **S**torage **S**ervice の頭文字 S が 3 つ並ぶ。「3」は番号ではない |
+
+Lambda、Fargate、API Gateway、CloudFormation は略語ではなく、そのままの名前。
+
 Azure（Microsoft のクラウド全体の名前）も同じ作りで、中にサービスがある。EC2 に当たるサービスは Azure Virtual Machines、Lambda に当たるサービスは Azure Functions。
 
 ### 「サーバーの管理が要らない」の意味
@@ -704,7 +714,7 @@ AWS の各サービスから見える単位は AWS アカウントで、プロ�
 
 ### バケットとは
 
-バケット（bucket）は、S3 で、ファイルを入れる一番外側の入れ物を指す。
+S3 は Amazon Simple Storage Service の略で、ファイルを保存するサービス。バケット（bucket）は、S3 で、ファイルを入れる一番外側の入れ物を指す。
 
 | 用語 | 意味 | パソコンでたとえると |
 |---|---|---|
