@@ -23,6 +23,7 @@ AWS（クラウド全体）
 ├─ ECS             コンテナを管理する（動かす先に EC2 か Fargate を選ぶ）
 ├─ EC2             仮想サーバーを借りる
 ├─ Fargate         サーバーを借りずにコンテナを動かす（ECS から使う）
+├─ ECR             コンテナイメージを保管する（ECS、Fargate、コンテナ版の Lambda が、ここから取り出して動かす）
 ├─ Lambda          関数を置くと、呼ばれたときだけ実行する
 ├─ S3              ファイルを保存する
 ├─ API Gateway     HTTP リクエストを受け付ける
@@ -36,6 +37,7 @@ AWS（クラウド全体）
 |---|---|---|
 | ECS | Amazon Elastic Container Service | **E**lastic **C**ontainer **S**ervice の頭文字 |
 | EC2 | Amazon Elastic Compute Cloud | **E**lastic **C**ompute **C**loud の頭文字 E と C が 2 つ並ぶ |
+| ECR | Amazon Elastic Container Registry | **E**lastic **C**ontainer **R**egistry の頭文字。Registry は「登録簿、保管所」の意味で、コンテナイメージの置き場を指す |
 | S3 | Amazon Simple Storage Service | **S**imple **S**torage **S**ervice の頭文字 S が 3 つ並ぶ。「3」は番号ではない |
 
 Lambda、Fargate、API Gateway、CloudFormation は略語ではなく、そのままの名前。
