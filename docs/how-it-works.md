@@ -21,7 +21,7 @@ AWS は、Amazon のクラウドサービス全体の名前。その中に、用
 ```
 AWS（クラウド全体）
 ├─ ECS             コンテナを管理する
-│                  （動かす先に EC2 か Fargate を選ぶ）
+│                  （動かす先は EC2、Fargate など。後述）
 ├─ ECR             コンテナイメージを保管する
 │                  （ECS、コンテナ版の Lambda が、ここから取り出して動かす）
 ├─ EC2             仮想サーバーを借りて、プログラムを動かす
@@ -103,7 +103,18 @@ Lambda は、利用者がサーバーを扱わない代わりに、動かせる�
 | Fargate | コンテナイメージを ECR に置いて指定すると、AWS 側のサーバーで動かしてくれる（利用者はサーバーを選ばず、借りない）。常に起動しておける。Amazon ECS（コンテナを管理するサービス）の動かし方の 1 つ | Fargate が行う |
 | Lambda（コンテナ版） | プログラムをコンテナの形で渡す Lambda。動かす環境の自由度は上がるが、実行時間の上限などの制約は変わらない | Lambda が行う |
 
-コンテナは、プログラムと、その動作に必要なもの（Python、ライブラリ、設定など）を 1 つにまとめた箱。Docker が代表的で、どこで動かしても同じ環境になる。コンテナを動かす先として、ECS では EC2 を選ぶこともできる。
+コンテナは、プログラムと、その動作に必要なもの（Python、ライブラリ、設定など）を 1 つにまとめた箱。Docker が代表的で、どこで動かしても同じ環境になる。ECS がコンテナを動かす先は、次の 4 つ。
+
+| 動かす先 | 内容 | サーバーの世話 |
+|---|---|---|
+| EC2 | 自分で借りた EC2 のサーバーで動かす | 自分で行う |
+| Fargate | AWS 側のサーバーで動かす。サーバーは選ばない | AWS が行う |
+| ECS Managed Instances | EC2 のサーバーで動かす。サーバーの用意と管理は AWS が行い、サーバーの種類は自分で選べる | AWS が行う |
+| External（ECS Anywhere） | 自分のオンプレミスのサーバーなど、AWS の外のサーバーで動かす | 自分で行う |
+
+1 つのクラスター（ECS で管理するサーバーとコンテナのまとまり）に、複数の動かす先を混ぜられる。このサンプルの文書では、対になる EC2 と Fargate を中心に説明する。
+
+参考: [Amazon ECS launch types and capacity providers（AWS 公式）](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/capacity-launch-type-comparison.html)
 
 コンテナの置き場は、コンテナイメージ（箱の中身を固めたファイル）を保管するレジストリで、AWS では Amazon ECR（Elastic Container Registry）。Docker Hub など AWS の外のレジストリも使える。Fargate で動かす流れは次のとおり。
 
