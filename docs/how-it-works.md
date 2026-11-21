@@ -21,7 +21,8 @@ AWS は、Amazon のクラウドサービス全体の名前。その中に、用
 ```
 AWS（クラウド全体）
 ├─ ECS             コンテナを管理する
-│                  （コンテナを動かす場所は EC2、Fargate など。後述）
+│                  （コンテナを動かす場所は、EC2、Fargate、
+│                  　ECS Managed Instances、External の 4 つ）
 ├─ ECR             コンテナイメージを保管する
 │                  （ECS、コンテナ版の Lambda が、ここから取り出して動かす）
 ├─ EC2             仮想サーバーを借りて、プログラムを動かす
