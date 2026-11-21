@@ -323,7 +323,7 @@ curl に表示されるのは、`body` の文字列だけ。`tests/test_app.py` 
 | `template.yaml` | 設計図 | 「受付（API Gateway）1 つ、料理人（Lambda）1 人、日誌（CloudWatch Logs）1 冊」のように、作るものが書いてある |
 | CloudFormation | 建設会社 | 設計図どおりに、全部まとめて建てる。撤去も全部まとめて行う |
 | スタック | 建ったお店一式 | CloudFormation が 1 つの設計図から作った、リソース（受付、料理人、日誌、社員証）のまとまり。まとめて作り、まとめて更新し、まとめて消す単位になる。このサンプルでは、`aws-lambda-minimal` という名前のスタックが 1 つできる |
-| SAM（Serverless Application Model） | 建設会社への発注を代行する業者 | CloudFormation を Lambda 向けに使いやすくするための道具。名前は「サーバーレスのアプリを書くための決まった書き方」という意味。次の 2 つを指す。<br>・テンプレートの書式：設計図を短く書ける（`template.yaml` の `Transform: AWS::Serverless-2016-10-31` がその印）<br>・`sam` コマンド（SAM CLI。CLI は Command Line Interface の略）：建設会社への依頼を代行する |
+| SAM（Serverless Application Model） | 建設会社への発注を代行する業者 | CloudFormation のテンプレートを Lambda 向けに短く書け、ビルドからデプロイまでをコマンドでまとめて行える道具で、リソースを実際に作るのは CloudFormation。名前は「サーバーレスのアプリを書くための決まった書き方」という意味。次の 2 つを指す。<br>・テンプレートの書式：設計図を短く書ける（`template.yaml` の `Transform: AWS::Serverless-2016-10-31` がその印）<br>・`sam` コマンド（SAM CLI。CLI は Command Line Interface の略）：建設会社への依頼を代行する |
 | SAM 用の S3 バケット | 資材置き場 | レシピ（コード）を建設会社に渡すために置いておく場所。`aws-sam-cli-managed-default` スタックとして作られる |
 
 ### CloudFormation とは
@@ -392,7 +392,7 @@ CloudFormation のコンソールの「スタック」には、次の 2 つが�
 
 ### SAM を使うと、必ず CloudFormation が使われる
 
-SAM は、CloudFormation を使ってリソースを作る道具。`sam deploy` を実行すると、必ず CloudFormation が使われる。CloudFormation を使うかどうかを選ぶ設定はなく、どのファイルにも「CloudFormation を使う」という設定は書いていない。
+SAM は、CloudFormation のテンプレートを Lambda 向けに短く書け、ビルドからデプロイまでをコマンドでまとめて行える道具で、リソースを実際に作るのは CloudFormation。`sam deploy` を実行すると、必ず CloudFormation が使われる。CloudFormation を使うかどうかを選ぶ設定はなく、どのファイルにも「CloudFormation を使う」という設定は書いていない。
 
 `sam deploy` は `template.yaml` を CloudFormation に渡して、リソースの作成を依頼する。CloudFormation を直接操作することはない。`sam deploy` の実行中に表示される `CREATE_IN_PROGRESS`、`CREATE_COMPLETE` などは、CloudFormation がリソースを作っている途中経過。
 
@@ -408,7 +408,7 @@ SAM は、CloudFormation を使ってリソースを作る道具。`sam deploy` 
 
 ### SAM とは
 
-SAM（Serverless Application Model）は、CloudFormation を Lambda 向けに使いやすくする道具。Amazon のクラウド事業の部門である AWS が開発していて、オープンソースとしてソースコードが GitHub に公開されている（`aws/serverless-application-model`、`aws/aws-sam-cli`）。リソースを実際に作るのは CloudFormation で、SAM はその手前の作業を引き受ける。
+SAM（Serverless Application Model）は、CloudFormation のテンプレートを Lambda 向けに短く書け、ビルドからデプロイまでをコマンドでまとめて行える道具で、リソースを実際に作るのは CloudFormation。Amazon のクラウド事業の部門である AWS が開発していて、オープンソースとしてソースコードが GitHub に公開されている（`aws/serverless-application-model`、`aws/aws-sam-cli`）。
 
 | 部分 | 中身 | このサンプルでの例 |
 |---|---|---|
@@ -759,7 +759,7 @@ AWS の各サービスから見える単位は AWS アカウントで、プロ�
 | リソース | AWS の上に作った個々のもの（Lambda の関数、ロググループ、HTTP API など） |
 | スタック | CloudFormation が 1 つのテンプレートからリソースを作り、集合としてまとめたもの。このサンプルでは `template.yaml` から `aws-lambda-minimal` というスタックが作られる。リソースとの違いは 4 章の「スタックとリソース」にある |
 | デプロイ | プログラムと、それが動くための仕組み一式（Lambda、API Gateway など）を AWS 上に用意し、インターネットから呼び出せる状態にすること。このサンプルでは `sam deploy` で行う。ビルドしたものを S3 に置き、CloudFormation が `template.yaml` どおりにリソースを作る（または更新する）。できた API の URL は公開され、URL を知っていれば誰でも、どの端末からでも呼び出せる |
-| SAM（Serverless Application Model） | CloudFormation を Lambda 向けに使いやすくするための道具。AWS が開発しているオープンソース。CloudFormation の書き方を短くした書式（このリポジトリの `template.yaml`）と、ビルドからデプロイ、削除までをまとめて行うコマンド（`sam`）の 2 つからなる。リソースを実際に作るのは CloudFormation |
+| SAM（Serverless Application Model） | CloudFormation のテンプレートを Lambda 向けに短く書け、ビルドからデプロイまでをコマンドでまとめて行える道具で、リソースを実際に作るのは CloudFormation。AWS が開発しているオープンソース。CloudFormation の書き方を短くした書式（このリポジトリの `template.yaml`）と、ビルドからデプロイ、削除までをまとめて行うコマンド（`sam`）の 2 つからなる |
 
 プロジェクト、AWS アカウント、リージョン、スタック、リソースの入れ子の関係は、7 章にある。
 
