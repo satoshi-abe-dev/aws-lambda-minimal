@@ -42,7 +42,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 | 10 | 後片付けをする | 作ったものを AWS から消し、誰でも呼び出せる API を残さない |
 | 11 | エラーの対処を調べる | うまくいかないときに参照する |
 
-用語、使う AWS のサービス、コマンドが何をしているかは、まとめノート [study-notes.md](study-notes.md) にある。この手順書は手順だけを書く。
+用語、使う AWS のサービス、コマンドが何をしているかは、まとめノート [aws-study-notes.md](aws-study-notes.md) にある。この手順書は手順だけを書く。
 
 1〜5 章は最初の 1 回だけの準備。6〜9 章は、コードを変えるたびに繰り返す流れ。10 章は、使い終わったときに行う。
 
@@ -70,7 +70,7 @@ https://<デプロイで作られる URL>/hello?name=test  →  {"message": "Hel
 
 ## 1. 用語について
 
-AWS の用語（プロジェクト、リージョン、IAM、Lambda、API Gateway、S3、CloudFormation、スタック、SAM など）の意味は、[study-notes.md](study-notes.md) の 8 章（用語集）にある。この手順書には手順を書き、言葉の意味と仕組みは study-notes.md にまとめている。
+AWS の用語（プロジェクト、リージョン、IAM、Lambda、API Gateway、S3、CloudFormation、スタック、SAM など）の意味は、[aws-study-notes.md](aws-study-notes.md) の 8 章（用語集）にある。この手順書には手順を書き、言葉の意味と仕組みは aws-study-notes.md にまとめている。
 
 ## 2. AWS アカウントの作成
 
@@ -361,7 +361,7 @@ SAM CLI の版によって、質問の文言が少し異なることがある。
 
 #### `--guided` と `samconfig.toml`
 
-`Save arguments to configuration file` に `Y` と答えると、回答がこのフォルダの `samconfig.toml` に保存される（すでにあるファイルは上書きされる）。保存された設定は、`--guided` を付けない `sam deploy`（B）で使われる。`samconfig.toml` の中身の意味は、[study-notes.md](study-notes.md) の 5 章「`samconfig.toml` の中身」にある。
+`Save arguments to configuration file` に `Y` と答えると、回答がこのフォルダの `samconfig.toml` に保存される（すでにあるファイルは上書きされる）。保存された設定は、`--guided` を付けない `sam deploy`（B）で使われる。`samconfig.toml` の中身の意味は、[aws-study-notes.md](aws-study-notes.md) の 5 章「`samconfig.toml` の中身」にある。
 
 `--guided` を付けて実行した場合は、保存済みの回答が `[ ]` の中に表示される。Enter を押していくと、同じ設定のままになる。
 
@@ -383,7 +383,7 @@ SAM CLI の版によって、質問の文言が少し異なることがある。
 4. CloudFormation がリソースを作る。進み具合が表示される。
 5. 完了すると `Outputs` に API の URL が表示される。
 
-手順 3 では、作るリソースの一覧（スタックがない状態では、6 つのリソースがすべて `+ Add`（新しく作る）の行）が表示される。列の意味と、各行のリソースの役割は、[study-notes.md](study-notes.md) の 5 章「変更セットの読み方」にある。
+手順 3 では、作るリソースの一覧（スタックがない状態では、6 つのリソースがすべて `+ Add`（新しく作る）の行）が表示される。列の意味と、各行のリソースの役割は、[aws-study-notes.md](aws-study-notes.md) の 5 章「変更セットの読み方」にある。
 
 一覧で確かめる点は、意図しない `- Remove`（削除）や、`Replacement` が `True`（作り直し）の行がないか。問題がなければ `y`、やめる場合は `n` と答える。`n` と答えると、AWS には何も変更されない。
 
@@ -456,7 +456,7 @@ setopt interactivecomments
 
 #### コマンドの意味
 
-`curl`、`$URL`、`?name=test`、`"` の意味は、[study-notes.md](study-notes.md) の 5 章「`curl` コマンドの意味」にある。
+`curl`、`$URL`、`?name=test`、`"` の意味は、[aws-study-notes.md](aws-study-notes.md) の 5 章「`curl` コマンドの意味」にある。
 
 | コマンド | 送る内容 | 返事 |
 |---|---|---|
@@ -465,7 +465,7 @@ setopt interactivecomments
 
 2 つ実行しているのは、名前を渡した場合と、渡さなかった場合（`World` になる）の両方を確かめるため。
 
-`Hello, test!` という文字列が `src/app.py` のどこで作られるかは、[仕組みの説明](study-notes.md)の 3 章「返事の文字列ができるまで」にある。
+`Hello, test!` という文字列が `src/app.py` のどこで作られるかは、[仕組みの説明](aws-study-notes.md)の 3 章「返事の文字列ができるまで」にある。
 
 ### AWS コンソールで見る
 
@@ -507,7 +507,7 @@ sam logs --stack-name aws-lambda-minimal -n HelloFunction --start-time '5min ago
 
 #### ログの読み方
 
-ログの各行（`START`、`END`、`REPORT`、`INIT_START` など）の意味は、[study-notes.md](study-notes.md) の 3 章「ログの読み方」にある。
+ログの各行（`START`、`END`、`REPORT`、`INIT_START` など）の意味は、[aws-study-notes.md](aws-study-notes.md) の 3 章「ログの読み方」にある。
 
 ## 9. コードを変更して再デプロイする
 
@@ -529,7 +529,7 @@ sam deploy
 
 ### ビルドとデプロイが必要な場合
 
-`src/app.py` を変えても、AWS 上の Lambda 関数のコードは変わらない。AWS に反映するには、`sam build` と `sam deploy` の両方が必要。理由と、不要な場合は、[study-notes.md](study-notes.md) の 5 章「ビルドとデプロイが必要な場合」にある。
+`src/app.py` を変えても、AWS 上の Lambda 関数のコードは変わらない。AWS に反映するには、`sam build` と `sam deploy` の両方が必要。理由と、不要な場合は、[aws-study-notes.md](aws-study-notes.md) の 5 章「ビルドとデプロイが必要な場合」にある。
 
 ## 10. 後片付け
 
@@ -575,7 +575,7 @@ curl で URL を呼ぶと、接続できないエラーになる。
 
 ### SAM 用の S3 バケットについて
 
-`sam delete` は、7 章で自動で作られた `aws-sam-cli-managed-default` スタックとその S3 バケットを削除しない。このバケットを、同じリージョンにあるほかの SAM アプリもデプロイのときに使うため（理由と費用は [study-notes.md](study-notes.md) の 9 章）。
+`sam delete` は、7 章で自動で作られた `aws-sam-cli-managed-default` スタックとその S3 バケットを削除しない。このバケットを、同じリージョンにあるほかの SAM アプリもデプロイのときに使うため（理由と費用は [aws-study-notes.md](aws-study-notes.md) の 9 章）。
 
 残した場合は、次の `sam deploy` でそのまま使われる。バケットとスタックはあるだけでは費用がかからず、このサンプルのファイルの量では保存料金もほぼゼロ。Free プランでは請求は発生しない。
 
@@ -588,7 +588,7 @@ curl で URL を呼ぶと、接続できないエラーになる。
 1. S3 のコンソールで `aws-sam-cli-managed-default-samclisourcebucket-...` を選び、「空にする」を実行する（古いバージョンも含めて消える）。
 2. CloudFormation のコンソールで `aws-sam-cli-managed-default` スタックを選び、「削除」を実行する。
 
-バケットが空でないと、スタックの削除は `DELETE_FAILED` で失敗する。手順の 1 で先に「空にする」を実行するのは、このため（[study-notes.md](study-notes.md) の 9 章）。
+バケットが空でないと、スタックの削除は `DELETE_FAILED` で失敗する。手順の 1 で先に「空にする」を実行するのは、このため（[aws-study-notes.md](aws-study-notes.md) の 9 章）。
 
 S3 の画面でバケットを「削除」まで行った場合も、スタックを削除するところまで行う。バケットだけを消してスタックを残すと、次の `sam deploy` が失敗する。
 
