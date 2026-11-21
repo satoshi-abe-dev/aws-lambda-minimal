@@ -20,10 +20,10 @@ AWS は、Amazon のクラウドサービス全体の名前。その中に、用
 
 ```
 AWS（クラウド全体）
-├─ EC2             仮想サーバーを借りる
-├─ Lambda          関数を置くと、呼ばれたときだけ実行する
 ├─ ECS             コンテナを管理する（動かす先に EC2 か Fargate を選ぶ）
+├─ EC2             仮想サーバーを借りる
 ├─ Fargate         サーバーを借りずにコンテナを動かす（ECS から使う）
+├─ Lambda          関数を置くと、呼ばれたときだけ実行する
 ├─ S3              ファイルを保存する
 ├─ API Gateway     HTTP リクエストを受け付ける
 ├─ CloudFormation  リソースをまとめて作る
@@ -34,8 +34,8 @@ AWS（クラウド全体）
 
 | 名前 | 正式な名前 | 略語の読み方 |
 |---|---|---|
-| EC2 | Amazon Elastic Compute Cloud | **E**lastic **C**ompute **C**loud の頭文字 E と C が 2 つ並ぶ |
 | ECS | Amazon Elastic Container Service | **E**lastic **C**ontainer **S**ervice の頭文字 |
+| EC2 | Amazon Elastic Compute Cloud | **E**lastic **C**ompute **C**loud の頭文字 E と C が 2 つ並ぶ |
 | S3 | Amazon Simple Storage Service | **S**imple **S**torage **S**ervice の頭文字 S が 3 つ並ぶ。「3」は番号ではない |
 
 Lambda、Fargate、API Gateway、CloudFormation は略語ではなく、そのままの名前。
@@ -691,9 +691,9 @@ AWS の各サービスから見える単位は AWS アカウントで、プロ�
 | 用語 | 説明 |
 |---|---|
 | AWS（Amazon Web Services） | Amazon のクラウドサービスの総称。Lambda、API Gateway などのサービスの集まり |
+| AWS Builder ID | ID は Identifier（識別子）の略。新しい登録方式で AWS にログインするための個人のアカウント。登録時に作られる |
 | プロジェクト | 新しい登録方式で、作ったリソースをまとめておく単位。1 つのプロジェクトに 1 つの AWS アカウントが入っている。登録すると最初のプロジェクトが自動で作られる。1 つの AWS Builder ID で、プロジェクトを複数作れる。従来の登録方式にはプロジェクトという単位はなく、登録すると AWS アカウントが 1 つ作られ、リソースはそこに直接置く |
 | AWS Settings | プロジェクトの管理、MFA、支払い方法などを設定する画面（<https://settings.aws.com>）。コンソールのホームの「プロジェクト管理」からも開ける |
-| AWS Builder ID | ID は Identifier（識別子）の略。新しい登録方式で AWS にログインするための個人のアカウント。登録時に作られる |
 | リージョン | AWS のデータセンターがある地域。新しい登録方式では、プロジェクトのリージョンが連絡先の国によって自動で決まる（米国東部（オハイオ）`us-east-2`、欧州（ストックホルム）`eu-north-1`、アジアパシフィック（シドニー）`ap-southeast-2` のどれか）。この手順書では例として `ap-southeast-2` を使う |
 | IAM（Identity and Access Management） | AWS の利用者と権限を管理するサービス。「誰が」「何をしてよいか」を決める。このサンプルでは、Lambda が動くための権限（IAM ロール）を SAM が自動で作る |
 | Lambda | 関数（プログラム）を置いておくと、呼ばれたときだけ実行するサービス。サーバーの管理が要らない（意味は 1 章の「『サーバーの管理が要らない』の意味」にある）。実行した回数と時間に応じて課金される |
@@ -701,8 +701,8 @@ AWS の各サービスから見える単位は AWS アカウントで、プロ�
 | CloudWatch Logs | プログラムのログ（`print` の出力やエラー）を保存するサービス |
 | S3（正式な名前は Amazon S3。Simple Storage Service の略） | ファイルを保存するサービス。ファイルを入れる入れ物を「バケット（bucket）」と呼ぶ。このサンプルでは、`sam deploy` がコードの zip とテンプレートを置く場所として使う。バケットの扱いは 9 章にある。「3」はバージョンや番号ではなく、**S**imple **S**torage **S**ervice の S が 3 つ並ぶことを表す（S1、S2 というサービスはない）。仮想サーバーの EC2（**E**lastic **C**ompute **C**loud、C が 2 つ）も同じ付け方 |
 | CloudFormation | 作りたいリソース（Lambda、API Gateway など）を設定ファイルに書くと、その通りにまとめて作るサービス。まとめて作ったものを「スタック」と呼び、スタックを削除すると中身もまとめて消える。このようにインフラをファイル（コード）で管理する方法を IaC（Infrastructure as Code）と呼ぶ。手で作る場合との違いは 4 章の「手でリソースを作る場合との違い」にある |
-| スタック | CloudFormation が 1 つのテンプレートからリソースを作り、集合としてまとめたもの。このサンプルでは `template.yaml` から `aws-lambda-minimal` というスタックが作られる。リソースとの違いは 4 章の「スタックとリソース」にある |
 | リソース | AWS の上に作った個々のもの（Lambda の関数、ロググループ、HTTP API など） |
+| スタック | CloudFormation が 1 つのテンプレートからリソースを作り、集合としてまとめたもの。このサンプルでは `template.yaml` から `aws-lambda-minimal` というスタックが作られる。リソースとの違いは 4 章の「スタックとリソース」にある |
 | デプロイ | プログラムと、それが動くための仕組み一式（Lambda、API Gateway など）を AWS 上に用意し、インターネットから呼び出せる状態にすること。このサンプルでは `sam deploy` で行う。ビルドしたものを S3 に置き、CloudFormation が `template.yaml` どおりにリソースを作る（または更新する）。できた API の URL は公開され、URL を知っていれば誰でも、どの端末からでも呼び出せる |
 | SAM（Serverless Application Model） | CloudFormation を Lambda 向けに使いやすくするための道具。AWS が開発しているオープンソース。CloudFormation の書き方を短くした書式（このリポジトリの `template.yaml`）と、ビルドからデプロイ、削除までをまとめて行うコマンド（`sam`）の 2 つからなる。リソースを実際に作るのは CloudFormation |
 
