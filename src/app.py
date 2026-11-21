@@ -5,7 +5,7 @@ API Gateway の正式な名前は Amazon API Gateway（AWS のサービス）。
 クエリ文字列の name を使って挨拶を JSON で返す。標準ライブラリのみを使う。
 
 template.yaml の `Handler: app.lambda_handler` で、このファイルの lambda_handler が指定されている。
-仕組みの説明は docs/study-notes.md にある。
+仕組みの説明は docs/aws-study-notes.md にある。
 """
 
 # ファイルの一番外側の行は、Lambda が起動したとき（コールドスタート）に 1 回だけ実行される。
