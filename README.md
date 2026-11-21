@@ -37,7 +37,7 @@ flowchart LR
 │   └── test_app.py         # pytest による単体テスト（AWS に接続しない）
 ├── docs/
 │   ├── getting-started.md  # 手順書（手順だけ）
-│   ├── aws-study-notes.md # まとめノート（用語集と仕組みの説明）
+│   ├── aws-study-notes.md  # まとめノート（用語集と仕組みの説明）
 │   └── terraform.md        # Terraform のメモ（SAM との違い）
 ├── template.yaml           # SAM テンプレート
 ├── requirements-dev.txt    # 開発用の依存（pytest）
