@@ -1,6 +1,6 @@
 # SAM テンプレート（お店の設計図）。
 # `sam deploy` でこのファイルを CloudFormation に渡すと、ここに書いたリソースがまとめて作られる。
-# 説明は docs/how-it-works.md にある。
+# 説明は docs/study-notes.md にある。
 #
 # このファイルで使っている CloudFormation の機能（YAML の機能ではなく、デプロイ時に CloudFormation が処理する）:
 #   組み込み関数（値を置き換える命令）
